@@ -3,15 +3,15 @@ const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
   // Configuración del modo (puedes usar 'development' o 'production')
-  mode: 'development',  // Cambia a 'production' cuando estés listo para producción
+  mode: 'production',  // Cambia a 'production' cuando estés listo para producción
 
   // Entrada del archivo principal
   entry: './src/index.js',
 
   // Salida del archivo empaquetado
   output: {
-    filename: 'bundle.js', // El nombre del archivo generado
-    path: path.resolve(__dirname, 'dist') // Carpeta donde se guardará el archivo generado
+    filename: 'bundle.js',  // El nombre del archivo generado
+    path: path.resolve(__dirname, 'docs'), // Carpeta donde se guardará el archivo generado (usamos 'docs')
   },
 
   // Configuración de plugins

@@ -1,0 +1,1 @@
+"serviceWorker"in navigator&&window.addEventListener("load",(()=>{navigator.serviceWorker.register("/service-worker.js").then((r=>{console.log("Service Worker registrado con éxito:",r)})).catch((r=>{console.log("Error al registrar el Service Worker:",r)}))})),console.log("PWA funcionando");
