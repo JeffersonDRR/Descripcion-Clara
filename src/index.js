@@ -89,15 +89,53 @@ function llenarListas() {
     });
 }
 
+// Referencias a las listas desplegables
+const clienteSelect = document.getElementById('cliente');
+const ciudadSelect = document.getElementById('ciudad');
+const equipoSelect = document.getElementById('equipo');
+const serialSelect = document.getElementById('serial');
+
+// Función para llenar las listas desplegables
+function llenarListas() {
+    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
+    const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
+
+    // Log para depurar
+    console.log('Clientes:', clientes);
+    console.log('Ciudades:', ciudades);
+
+    // Llenar Cliente
+    clientes.forEach(cliente => {
+        const option = document.createElement('option');
+        option.value = cliente;
+        option.textContent = cliente;
+        clienteSelect.appendChild(option);
+    });
+
+    // Llenar Ciudad
+    ciudades.forEach(ciudad => {
+        const option = document.createElement('option');
+        option.value = ciudad;
+        option.textContent = ciudad;
+        ciudadSelect.appendChild(option);
+    });
+}
+
 // Función para actualizar los equipos según el cliente y ciudad seleccionados
 function actualizarEquiposYSeriales() {
     const clienteSeleccionado = clienteSelect.value;
     const ciudadSeleccionada = ciudadSelect.value;
 
+    console.log('Cliente seleccionado:', clienteSeleccionado);
+    console.log('Ciudad seleccionada:', ciudadSeleccionada);
+
     // Filtrar los datos según el cliente y la ciudad seleccionados
     const equiposFiltrados = baseDatos.filter(item => 
         item.CLIENTE === clienteSeleccionado && item.CIUDAD === ciudadSeleccionada
     );
+
+    // Log para depurar
+    console.log('Equipos filtrados:', equiposFiltrados);
 
     // Limpiar y llenar el campo de equipos
     equipoSelect.innerHTML = '';
