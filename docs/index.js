@@ -61,7 +61,7 @@ const baseDatos = [
     { CLIENTE: 'TIA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'GUAYAQUIL', SERIAL: '19031006', CODIGO: '(9000-100)' }
 ];
 
-// Obtener los elementos del DOM una sola vez
+// Espera a que el DOM esté cargado antes de ejecutar el script
 document.addEventListener("DOMContentLoaded", function() {
     const clienteSelect = document.getElementById("cliente");
     const ciudadSelect = document.getElementById("ciudad");
@@ -71,7 +71,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Función para cargar las opciones en los selectores
     function cargarSelects() {
-        // Obtener valores únicos de cliente, ciudad y equipo
         const clientes = [...new Set(data.map(item => item.cliente))];
         const ciudades = [...new Set(data.map(item => item.ciudad))];
         const equipos = [...new Set(data.map(item => item.equipo))];
