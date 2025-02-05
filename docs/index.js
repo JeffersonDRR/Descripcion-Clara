@@ -62,90 +62,92 @@ const baseDatos = [
 ];
 
 // Obtener los elementos del DOM una sola vez
-const clienteSelect = document.getElementById("cliente");
-const ciudadSelect = document.getElementById("ciudad");
-const equipoSelect = document.getElementById("equipo");
-const serialSelect = document.getElementById("serial");
-const codigoInput = document.getElementById("codigo");
+document.addEventListener("DOMContentLoaded", function() {
+    const clienteSelect = document.getElementById("cliente");
+    const ciudadSelect = document.getElementById("ciudad");
+    const equipoSelect = document.getElementById("equipo");
+    const serialSelect = document.getElementById("serial");
+    const codigoInput = document.getElementById("codigo");
 
-// Función para cargar las opciones en los selectores
-function cargarSelects() {
-    // Obtener valores únicos de cliente, ciudad y equipo
-    const clientes = [...new Set(data.map(item => item.cliente))];
-    const ciudades = [...new Set(data.map(item => item.ciudad))];
-    const equipos = [...new Set(data.map(item => item.equipo))];
+    // Función para cargar las opciones en los selectores
+    function cargarSelects() {
+        // Obtener valores únicos de cliente, ciudad y equipo
+        const clientes = [...new Set(data.map(item => item.cliente))];
+        const ciudades = [...new Set(data.map(item => item.ciudad))];
+        const equipos = [...new Set(data.map(item => item.equipo))];
 
-    // Limpiar los selectores antes de cargar nuevas opciones
-    clienteSelect.innerHTML = "";
-    ciudadSelect.innerHTML = "";
-    equipoSelect.innerHTML = "";
-    serialSelect.innerHTML = "";
+        // Limpiar los selectores antes de cargar nuevas opciones
+        clienteSelect.innerHTML = "";
+        ciudadSelect.innerHTML = "";
+        equipoSelect.innerHTML = "";
+        serialSelect.innerHTML = "";
 
-    // Llenar el select de clientes
-    clientes.forEach(cliente => {
-        const option = document.createElement("option");
-        option.value = cliente;
-        option.textContent = cliente;
-        clienteSelect.appendChild(option);
-    });
+        // Llenar el select de clientes
+        clientes.forEach(cliente => {
+            const option = document.createElement("option");
+            option.value = cliente;
+            option.textContent = cliente;
+            clienteSelect.appendChild(option);
+        });
 
-    // Llenar el select de ciudades
-    ciudades.forEach(ciudad => {
-        const option = document.createElement("option");
-        option.value = ciudad;
-        option.textContent = ciudad;
-        ciudadSelect.appendChild(option);
-    });
+        // Llenar el select de ciudades
+        ciudades.forEach(ciudad => {
+            const option = document.createElement("option");
+            option.value = ciudad;
+            option.textContent = ciudad;
+            ciudadSelect.appendChild(option);
+        });
 
-    // Llenar el select de equipos
-    equipos.forEach(equipo => {
-        const option = document.createElement("option");
-        option.value = equipo;
-        option.textContent = equipo;
-        equipoSelect.appendChild(option);
-    });
-}
-
-// Función para generar el código según la selección
-function generarCodigo() {
-    const cliente = clienteSelect.value;
-    const ciudad = ciudadSelect.value;
-    const equipo = equipoSelect.value;
-    const serial = serialSelect.value;
-
-    // Filtrar los datos según las selecciones
-    const item = data.find(item => item.cliente === cliente && item.ciudad === ciudad && item.equipo === equipo && item.serial === serial);
-
-    // Si se encuentra el código, actualizar el campo de código
-    if (item) {
-        codigoInput.value = `${item.codigo} ${equipo} ${serial} ${ciudad} ${cliente}`;
-    } else {
-        codigoInput.value = "No se encontró el código.";
+        // Llenar el select de equipos
+        equipos.forEach(equipo => {
+            const option = document.createElement("option");
+            option.value = equipo;
+            option.textContent = equipo;
+            equipoSelect.appendChild(option);
+        });
     }
-}
 
-// Cargar las opciones al iniciar
-cargarSelects();
+    // Función para generar el código según la selección
+    function generarCodigo() {
+        const cliente = clienteSelect.value;
+        const ciudad = ciudadSelect.value;
+        const equipo = equipoSelect.value;
+        const serial = serialSelect.value;
 
-// Agregar eventos para que se actualicen las opciones al cambiar una selección
-clienteSelect.addEventListener("change", generarCodigo);
-ciudadSelect.addEventListener("change", generarCodigo);
-equipoSelect.addEventListener("change", generarCodigo);
-serialSelect.addEventListener("change", generarCodigo);
+        // Filtrar los datos según las selecciones
+        const item = data.find(item => item.cliente === cliente && item.ciudad === ciudad && item.equipo === equipo && item.serial === serial);
 
-// Función para agregar los seriales cuando se selecciona un equipo
-equipoSelect.addEventListener("change", function() {
-    const equipoSeleccionado = equipoSelect.value;
-    const seriales = data.filter(item => item.equipo === equipoSeleccionado).map(item => item.serial);
+        // Si se encuentra el código, actualizar el campo de código
+        if (item) {
+            codigoInput.value = `${item.codigo} ${equipo} ${serial} ${ciudad} ${cliente}`;
+        } else {
+            codigoInput.value = "No se encontró el código.";
+        }
+    }
 
-    // Limpiar los seriales
-    serialSelect.innerHTML = "";
+    // Cargar las opciones al iniciar
+    cargarSelects();
 
-    // Llenar el select de seriales con los valores correspondientes
-    seriales.forEach(serial => {
-        const option = document.createElement("option");
-        option.value = serial;
-        option.textContent = serial;
-        serialSelect.appendChild(option);
+    // Agregar eventos para que se actualicen las opciones al cambiar una selección
+    clienteSelect.addEventListener("change", generarCodigo);
+    ciudadSelect.addEventListener("change", generarCodigo);
+    equipoSelect.addEventListener("change", generarCodigo);
+    serialSelect.addEventListener("change", generarCodigo);
+
+    // Función para agregar los seriales cuando se selecciona un equipo
+    equipoSelect.addEventListener("change", function() {
+        const equipoSeleccionado = equipoSelect.value;
+        const seriales = data.filter(item => item.equipo === equipoSeleccionado).map(item => item.serial);
+
+        // Limpiar los seriales
+        serialSelect.innerHTML = "";
+
+        // Llenar el select de seriales con los valores correspondientes
+        seriales.forEach(serial => {
+            const option = document.createElement("option");
+            option.value = serial;
+            option.textContent = serial;
+            serialSelect.appendChild(option);
+        });
     });
 });
