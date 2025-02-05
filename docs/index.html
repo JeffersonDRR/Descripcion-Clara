@@ -1,39 +1,41 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generador de Códigos</title>
-  <script defer src="src/index.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Códigos Cubiscan</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Generador de Códigos Cubiscan</h1>
+    <h1>Generador de Códigos Cubiscan</h1>
 
-  <form id="generador-codigo">
-    <label for="cliente">Cliente:</label>
-    <select id="cliente">
-      <option value="">Selecciona un cliente</option>
-    </select>
+    <form id="form">
+        <label for="cliente">Cliente</label>
+        <select id="cliente">
+            <!-- Opciones se llenarán con JS -->
+        </select>
 
-    <label for="equipo">Equipo:</label>
-    <select id="equipo">
-      <option value="">Selecciona un equipo</option>
-    </select>
+        <label for="ciudad">Ciudad</label>
+        <select id="ciudad">
+            <!-- Opciones se llenarán con JS -->
+        </select>
 
-    <label for="ciudad">Ciudad:</label>
-    <select id="ciudad">
-      <option value="">Selecciona una ciudad</option>
-    </select>
+        <label for="equipo">Equipo</label>
+        <select id="equipo">
+            <!-- Opciones se llenarán con JS -->
+        </select>
 
-    <label for="serial">Serial:</label>
-    <select id="serial">
-      <option value="">Selecciona un serial</option>
-    </select>
-  </form>
+        <label for="serial">Serial</label>
+        <select id="serial">
+            <!-- Opciones se llenarán con JS -->
+        </select>
 
-  <div id="resultado">
-    <!-- El código generado aparecerá aquí -->
-  </div>
+        <label for="codigo">Código</label>
+        <input type="text" id="codigo" readonly>
+
+        <button type="submit">Generar Código</button>
+    </form>
+
+    <script src="index.js"></script>
 </body>
 </html>
