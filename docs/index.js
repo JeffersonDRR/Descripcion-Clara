@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
             month: 'short'
         }).toUpperCase();
 
-        // Modificación clave: búsqueda más flexible de código
+        // Búsqueda más flexible de código
         const codigo = baseDatos.find(d => 
             (d.CLIENTE === cliente || 
              (cliente === 'TCC' && d.CLIENTE.includes('TCC'))) && 
@@ -278,27 +278,33 @@ document.addEventListener("DOMContentLoaded", () => {
             (d.SERIAL === serial || d.SERIAL === '')
         )?.CODIGO || "";
         
-        if (codigo && actividad && concepto) {
-            let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} ${fechaFormateada}`;
-            
-            if (concepto === 'TRANS') {
-                codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} ${fechaFormateada}`;
-            }
-
-            document.getElementById("codigo").value = codigoGenerado;
-        } else {
-            // Depuración para entender por qué no se genera el código
-            console.log('Datos para generación de código:', {
+        // Validar campos requeridos
+        if (!cliente || !actividad || !concepto || !serial || !codigo) {
+            console.log('Datos incompletos:', {
                 cliente,
-                ciudad,
-                equipo,
-                serial,
                 actividad,
                 concepto,
-                codigo: codigo
+                serial,
+                codigo
             });
-            document.getElementById("codigo").value = "No se pudo generar el código";
+            document.getElementById("codigo").value = "Datos incompletos";
+            return;
         }
+
+        // Generar código base
+        let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} ${fechaFormateada}`;
+        
+        // Manejar conceptos de transporte
+        if (concepto === 'TRANS') {
+            // Validar lugares para transporte
+            if (!lugarInicial || !lugarFinal) {
+                document.getElementById("codigo").value = "Seleccione lugares de transporte";
+                return;
+            }
+            codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} ${fechaFormateada}`;
+        }
+
+        document.getElementById("codigo").value = codigoGenerado;
     });
 
     window.addEventListener('beforeunload', limpiarFormulario);
