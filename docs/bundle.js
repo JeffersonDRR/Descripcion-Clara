@@ -1,9 +1,6 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swPath = '/Descripcion-Clara/docs/service-worker.js';
-    const swScope = '/Descripcion-Clara/docs/';
-    
-    navigator.serviceWorker.register(swPath, { scope: swScope })
+    navigator.serviceWorker.register('service-worker.js')
       .then((registration) => {
         console.log('Service Worker registrado con éxito:', registration);
       })
