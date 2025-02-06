@@ -1,75 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descripción Clara</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" sizes="192x192" href="/DescripcionClara.Web/docs/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/DescripcionClara.Web/docs/icon-512x512.png">
-    <link rel="manifest" href="manifest.json">
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Descripción Clara</title>
+   <link rel="stylesheet" href="styles.css">
+   <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+   <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+   <link rel="manifest" href="manifest.json">
+   <meta name="theme-color" content="#ffffff">
 </head>
 <body>
-    <h1>Descripción Clara</h1>
+   <h1>Descripción Clara</h1>
 
-    <form id="form">
-        <label for="actividad">Actividad</label>
-        <select id="actividad" required>
-            <option value="" disabled selected>Seleccione una opción</option>
-        </select>
+   <form id="form">
+       <label for="actividad">Actividad</label>
+       <select id="actividad" required>
+           <option value="" disabled selected>Seleccione una opción</option>
+       </select>
 
-        <label for="cliente">Cliente</label>
-        <select id="cliente" required>
-            <option value="" disabled selected>Seleccione una opción</option>
-        </select>
+       <label for="cliente">Cliente</label>
+       <select id="cliente" required>
+           <option value="" disabled selected>Seleccione una opción</option>
+       </select>
 
-        <label for="ciudad">Ciudad</label>
-        <select id="ciudad" required>
-            <option value="" disabled selected>Seleccione una opción</option>
-        </select>
+       <label for="ciudad">Ciudad</label>
+       <select id="ciudad" required>
+           <option value="" disabled selected>Seleccione una opción</option>
+       </select>
 
-        <label for="equipo">Equipo</label>
-        <select id="equipo" required>
-            <option value="" disabled selected>Seleccione una opción</option>
-        </select>
+       <label for="equipo">Equipo</label>
+       <select id="equipo" required>
+           <option value="" disabled selected>Seleccione una opción</option>
+       </select>
 
-        <label for="serial">Serial</label>
-        <select id="serial" required>
-            <option value="" disabled selected>Seleccione una opción</option>
-        </select>
+       <label for="serial">Serial</label>
+       <select id="serial" required>
+           <option value="" disabled selected>Seleccione una opción</option>
+       </select>
 
-        <label for="concepto">Concepto</label>
-        <select id="concepto" required>
-            <option value="" disabled selected>Seleccione una opción</option>
-        </select>
+       <label for="concepto">Concepto</label>
+       <select id="concepto" required>
+           <option value="" disabled selected>Seleccione una opción</option>
+       </select>
 
-        <div id="camposTransporte" style="display:none;">
-            <label for="lugarInicial">Lugar Inicial</label>
-            <select id="lugarInicial" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
+       <div id="camposTransporte" style="display:none;">
+           <label for="lugarInicial">Lugar Inicial</label>
+           <select id="lugarInicial" required>
+               <option value="" disabled selected>Seleccione una opción</option>
+           </select>
 
-            <label for="lugarFinal">Lugar Final</label>
-            <select id="lugarFinal" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-        </div>
+           <label for="lugarFinal">Lugar Final</label>
+           <select id="lugarFinal" required>
+               <option value="" disabled selected>Seleccione una opción</option>
+           </select>
+       </div>
 
-        <label for="fecha">Fecha</label>
-        <input type="date" id="fecha" required value="2025-02-06">
+       <label for="fecha">Fecha</label>
+       <input type="date" id="fecha" required value="2025-02-06">
 
-        <label for="codigo">Código</label>
-        <input type="text" id="codigo" readonly>
+       <label for="codigo">Código</label>
+       <input type="text" id="codigo" readonly>
 
-        <button type="submit">Generar Código</button>
-        
-        <div class="buttons-container">
-            <button type="button" id="copiar">Copiar</button>
-            <button type="button" id="limpiar">Limpiar</button>
-        </div>
-    </form>
+       <button type="submit">Generar Código</button>
+       
+       <div class="buttons-container">
+           <button type="button" id="copiar">Copiar</button>
+           <button type="button" id="limpiar">Limpiar</button>
+       </div>
+   </form>
 
-    <script src="index.js"></script>
-    <script src="bundle.js"></script>
+   <script src="index.js"></script>
+   <script src="bundle.js"></script>
 </body>
 </html>
