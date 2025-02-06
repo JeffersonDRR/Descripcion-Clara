@@ -1,12 +1,12 @@
-const CACHE_NAME = 'descripcion-clara-cache';
+Copyconst CACHE_NAME = 'descripcion-clara-cache';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/index.js',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
-  '/manifest.json'
+  '/DescripcionClara.Web/docs/',
+  '/DescripcionClara.Web/docs/index.html',
+  '/DescripcionClara.Web/docs/styles.css',
+  '/DescripcionClara.Web/docs/index.js',
+  '/DescripcionClara.Web/docs/icon-192x192.png',
+  '/DescripcionClara.Web/docs/icon-512x512.png',
+  '/DescripcionClara.Web/docs/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
