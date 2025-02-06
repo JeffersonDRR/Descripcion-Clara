@@ -103,14 +103,25 @@ function filtrarBaseDatos() {
     const ciudad = document.getElementById("ciudad").value;
     const equipo = document.getElementById("equipo").value;
 
+    // Filtra los datos basándose en los valores seleccionados
     if (cliente) {
-        datosFiltrados = datosFiltrados.filter(item => item.CLIENTE === cliente);
+        // Modificación clave: usa filter con una comparación más flexible
+        datosFiltrados = datosFiltrados.filter(item => 
+            item.CLIENTE === cliente || 
+            (item.CLIENTE.includes('TCC') && cliente.includes('TCC'))
+        );
     }
     if (ciudad) {
-        datosFiltrados = datosFiltrados.filter(item => item.CIUDAD === ciudad);
+        // Filtra incluso si la ciudad está vacía para algunos registros
+        datosFiltrados = datosFiltrados.filter(item => 
+            item.CIUDAD === ciudad || item.CIUDAD === ''
+        );
     }
     if (equipo) {
-        datosFiltrados = datosFiltrados.filter(item => item.EQUIPO === equipo);
+        // Filtra incluso si el equipo está vacío para algunos registros
+        datosFiltrados = datosFiltrados.filter(item => 
+            item.EQUIPO === equipo || item.EQUIPO === ''
+        );
     }
 
     return datosFiltrados;
@@ -119,7 +130,13 @@ function filtrarBaseDatos() {
 function actualizarSelect(selectId, propiedad) {
     const select = document.getElementById(selectId);
     const datosFiltrados = filtrarBaseDatos();
-    const opciones = [...new Set(datosFiltrados.map(item => item[propiedad]))];
+    
+    // Obtener opciones únicas, excluyendo cadenas vacías
+    const opciones = [...new Set(
+        datosFiltrados
+            .map(item => item[propiedad])
+            .filter(valor => valor !== '')
+    )];
     
     select.innerHTML = "<option value=''>Seleccione una opción</option>";
     opciones.forEach(opcion => {
@@ -129,8 +146,10 @@ function actualizarSelect(selectId, propiedad) {
         select.appendChild(option);
     });
     
+    // Habilitar el select solo si hay opciones disponibles
     select.disabled = opciones.length === 0;
     
+    // Si solo hay una opción, seleccionarla automáticamente
     if (opciones.length === 1) {
         select.value = opciones[0];
         select.dispatchEvent(new Event('change'));
@@ -164,11 +183,14 @@ function limpiarFormulario() {
 }
 
 function inicializarSelects() {
-    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
+    // Modificación para manejar variantes de TCC
+    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))]
+        .map(cliente => cliente.includes('TCC') ? 'TCC' : cliente);
+    
     const clienteSelect = document.getElementById("cliente");
     
     clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
-    clientes.forEach(cliente => {
+    [...new Set(clientes)].forEach(cliente => {
         let option = document.createElement("option");
         option.value = cliente;
         option.textContent = cliente;
