@@ -1,4 +1,4 @@
-const CACHE_NAME = 'descripcion-clara-cache';
+const CACHE_NAME = 'descripcion-clara-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
