@@ -61,92 +61,118 @@ const baseDatos = [
     { CLIENTE: 'TIA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'GUAYAQUIL', SERIAL: '19031006', CODIGO: '(9000-100)' }
 ];
 
-// Espera a que el DOM esté cargado antes de ejecutar el script
-document.addEventListener("DOMContentLoaded", function() {
-    const clienteSelect = document.getElementById("cliente");
-    const ciudadSelect = document.getElementById("ciudad");
-    const equipoSelect = document.getElementById("equipo");
-    const serialSelect = document.getElementById("serial");
-    const codigoInput = document.getElementById("codigo");
+const actividades = {
+    "MANTENIMIENTO PREVENTIVO": "MAN P",
+    "MANTENIMIENTO CORRECTIVO": "MAN C",
+    "VISITA EXTRA": "VIS EXT",
+    "INSTALACIÓN": "INS",
+    "GARANTÍA": "GAR"
+};
 
-    // Función para cargar las opciones en los selectores
-    function cargarSelects() {
-        const clientes = [...new Set(data.map(item => item.cliente))];
-        const ciudades = [...new Set(data.map(item => item.ciudad))];
-        const equipos = [...new Set(data.map(item => item.equipo))];
+const conceptos = {
+    "TRANSPORTE": "TRANS",
+    "CENA": "CENA",
+    "ALMUERZO": "ALMU",
+    "DESAYUNO": "DES",
+    "HERRAMIENTA": "HERR",
+    "HOTEL": "HOT",
+    "CAFETERIA": "CAF",
+    "BIENESTAR": "BIEN",
+    "ASEO": "ASE",
+    "PAGO POR EQUIVOCACIÓN": "CXC",
+    "CLIENTE": "CLI"
+};
 
-        // Limpiar los selectores antes de cargar nuevas opciones
-        clienteSelect.innerHTML = "";
-        ciudadSelect.innerHTML = "";
-        equipoSelect.innerHTML = "";
-        serialSelect.innerHTML = "";
+// Elementos del DOM
+const clienteSelect = document.getElementById("cliente");
+const ciudadSelect = document.getElementById("ciudad");
+const equipoSelect = document.getElementById("equipo");
+const serialSelect = document.getElementById("serial");
+const actividadSelect = document.getElementById("actividad");
+const conceptoSelect = document.getElementById("concepto");
+const codigoInput = document.getElementById("codigo");
+const form = document.getElementById("form");
 
-        // Llenar el select de clientes
-        clientes.forEach(cliente => {
-            const option = document.createElement("option");
-            option.value = cliente;
-            option.textContent = cliente;
-            clienteSelect.appendChild(option);
-        });
+// Cargar opciones en los selects
+function cargarSelects() {
+    const clientesUnicos = [...new Set(data.map(item => item.cliente))];
+    clientesUnicos.forEach(cliente => {
+        let option = document.createElement("option");
+        option.value = cliente;
+        option.textContent = cliente;
+        clienteSelect.appendChild(option);
+    });
+    
+    Object.keys(actividades).forEach(actividad => {
+        let option = document.createElement("option");
+        option.value = actividades[actividad];
+        option.textContent = actividad;
+        actividadSelect.appendChild(option);
+    });
+    
+    Object.keys(conceptos).forEach(concepto => {
+        let option = document.createElement("option");
+        option.value = conceptos[concepto];
+        option.textContent = concepto;
+        conceptoSelect.appendChild(option);
+    });
+}
 
-        // Llenar el select de ciudades
-        ciudades.forEach(ciudad => {
-            const option = document.createElement("option");
-            option.value = ciudad;
-            option.textContent = ciudad;
-            ciudadSelect.appendChild(option);
-        });
+// Filtrar datos progresivamente
+clienteSelect.addEventListener("change", function() {
+    ciudadSelect.innerHTML = "<option value=''>Seleccione una ciudad</option>";
+    equipoSelect.innerHTML = "<option value=''>Seleccione un equipo</option>";
+    serialSelect.innerHTML = "<option value=''>Seleccione un serial</option>";
 
-        // Llenar el select de equipos
-        equipos.forEach(equipo => {
-            const option = document.createElement("option");
-            option.value = equipo;
-            option.textContent = equipo;
-            equipoSelect.appendChild(option);
-        });
-    }
-
-    // Función para generar el código según la selección
-    function generarCodigo() {
-        const cliente = clienteSelect.value;
-        const ciudad = ciudadSelect.value;
-        const equipo = equipoSelect.value;
-        const serial = serialSelect.value;
-
-        // Filtrar los datos según las selecciones
-        const item = data.find(item => item.cliente === cliente && item.ciudad === ciudad && item.equipo === equipo && item.serial === serial);
-
-        // Si se encuentra el código, actualizar el campo de código
-        if (item) {
-            codigoInput.value = `${item.codigo} ${equipo} ${serial} ${ciudad} ${cliente}`;
-        } else {
-            codigoInput.value = "No se encontró el código.";
-        }
-    }
-
-    // Cargar las opciones al iniciar
-    cargarSelects();
-
-    // Agregar eventos para que se actualicen las opciones al cambiar una selección
-    clienteSelect.addEventListener("change", generarCodigo);
-    ciudadSelect.addEventListener("change", generarCodigo);
-    equipoSelect.addEventListener("change", generarCodigo);
-    serialSelect.addEventListener("change", generarCodigo);
-
-    // Función para agregar los seriales cuando se selecciona un equipo
-    equipoSelect.addEventListener("change", function() {
-        const equipoSeleccionado = equipoSelect.value;
-        const seriales = data.filter(item => item.equipo === equipoSeleccionado).map(item => item.serial);
-
-        // Limpiar los seriales
-        serialSelect.innerHTML = "";
-
-        // Llenar el select de seriales con los valores correspondientes
-        seriales.forEach(serial => {
-            const option = document.createElement("option");
-            option.value = serial;
-            option.textContent = serial;
-            serialSelect.appendChild(option);
-        });
+    const ciudades = [...new Set(data.filter(item => item.cliente === clienteSelect.value).map(item => item.ciudad))];
+    ciudades.forEach(ciudad => {
+        let option = document.createElement("option");
+        option.value = ciudad;
+        option.textContent = ciudad;
+        ciudadSelect.appendChild(option);
     });
 });
+
+ciudadSelect.addEventListener("change", function() {
+    equipoSelect.innerHTML = "<option value=''>Seleccione un equipo</option>";
+    serialSelect.innerHTML = "<option value=''>Seleccione un serial</option>";
+
+    const equipos = [...new Set(data.filter(item => item.ciudad === ciudadSelect.value).map(item => item.equipo))];
+    equipos.forEach(equipo => {
+        let option = document.createElement("option");
+        option.value = equipo;
+        option.textContent = equipo;
+        equipoSelect.appendChild(option);
+    });
+});
+
+equipoSelect.addEventListener("change", function() {
+    serialSelect.innerHTML = "<option value=''>Seleccione un serial</option>";
+    const seriales = data.filter(item => item.equipo === equipoSelect.value && item.ciudad === ciudadSelect.value);
+    seriales.forEach(item => {
+        let option = document.createElement("option");
+        option.value = item.serial;
+        option.textContent = item.serial;
+        serialSelect.appendChild(option);
+    });
+});
+
+// Generar código
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const cliente = clienteSelect.value;
+    const ciudad = ciudadSelect.value;
+    const equipo = equipoSelect.value;
+    const serial = serialSelect.value;
+    const actividad = actividadSelect.value;
+    const concepto = conceptoSelect.value;
+    
+    if (cliente && ciudad && equipo && serial && actividad && concepto) {
+        const codigoBase = data.find(item => item.cliente === cliente && item.equipo === equipo && item.serial === serial)?.codigo || "";
+        codigoInput.value = `${codigoBase} ${concepto} ${cliente}-${ciudad} ${actividad} ${serial} 15 ENE`;
+    } else {
+        alert("Por favor seleccione todas las opciones");
+    }
+});
+
+document.addEventListener("DOMContentLoaded", cargarSelects);
