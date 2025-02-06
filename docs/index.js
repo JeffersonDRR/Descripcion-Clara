@@ -92,97 +92,123 @@ document.addEventListener("DOMContentLoaded", () => {
         "CIT": "CIT"
     };
 
-    function llenarSelect(select, opciones, valorPorDefecto = true) {
-        select.innerHTML = valorPorDefecto ? "<option value=''>Seleccione una opción</option>" : "";
-        Object.keys(opciones).forEach(key => {
+    function filtrarBaseDatos() {
+        let datosFiltrados = [...baseDatos];
+        const cliente = document.getElementById("cliente").value;
+        const ciudad = document.getElementById("ciudad").value;
+        const equipo = document.getElementById("equipo").value;
+
+        if (cliente) {
+            datosFiltrados = datosFiltrados.filter(item => item.CLIENTE === cliente);
+        }
+        if (ciudad) {
+            datosFiltrados = datosFiltrados.filter(item => item.CIUDAD === ciudad);
+        }
+        if (equipo) {
+            datosFiltrados = datosFiltrados.filter(item => item.EQUIPO === equipo);
+        }
+
+        return datosFiltrados;
+    }
+
+    function actualizarSelect(selectId, propiedad) {
+        const select = document.getElementById(selectId);
+        const datosFiltrados = filtrarBaseDatos();
+        const opciones = [...new Set(datosFiltrados.map(item => item[propiedad]))];
+        
+        select.innerHTML = "<option value=''>Seleccione una opción</option>";
+        opciones.forEach(opcion => {
             let option = document.createElement("option");
-            option.value = opciones[key];
-            option.textContent = key;
+            option.value = opcion;
+            option.textContent = opcion;
             select.appendChild(option);
         });
-    }
-
-    function filtrarOpciones(selectOrigen, selectDestino, propiedad) {
-        const valorSeleccionado = selectOrigen.value;
-        const opcionesFiltradas = [...new Set(baseDatos
-            .filter(item => item[propiedad.toUpperCase()] === valorSeleccionado)
-            .map(item => item[selectDestino.id.toUpperCase()])
-        )];
-
-        llenarSelect(selectDestino, Object.fromEntries(opcionesFiltradas.map(v => [v, v])), false);
-        selectDestino.disabled = opcionesFiltradas.length === 0;
-    }
-
-    function setupFiltradoProgresivo() {
-        const selects = ['cliente', 'ciudad', 'equipo', 'serial'];
         
-        selects.forEach((selectId, index) => {
-            const selectActual = document.getElementById(selectId);
-            
-            selectActual.addEventListener('change', () => {
-                if (index < selects.length - 1) {
-                    const selectSiguiente = document.getElementById(selects[index + 1]);
-                    selectSiguiente.innerHTML = "<option value=''>Seleccione una opción</option>";
-                    selectSiguiente.disabled = true;
-                    
-                    if (selectActual.value) {
-                        filtrarOpciones(selectActual, selectSiguiente, selectId);
-                    }
-                }
+        select.disabled = opciones.length === 0;
+    }
+
+    function setupEventListeners() {
+        document.getElementById("cliente").addEventListener('change', () => {
+            actualizarSelect("ciudad", "CIUDAD");
+            actualizarSelect("equipo", "EQUIPO");
+            actualizarSelect("serial", "SERIAL");
+        });
+
+        document.getElementById("ciudad").addEventListener('change', () => {
+            actualizarSelect("equipo", "EQUIPO");
+            actualizarSelect("serial", "SERIAL");
+        });
+
+        document.getElementById("equipo").addEventListener('change', () => {
+            actualizarSelect("serial", "SERIAL");
+        });
+
+        document.getElementById("concepto").addEventListener('change', (e) => {
+            document.getElementById('camposTransporte').style.display = 
+                e.target.value === 'TRANS' ? 'block' : 'none';
+        });
+
+        document.getElementById("copiar").addEventListener('click', () => {
+            const codigoInput = document.getElementById("codigo");
+            codigoInput.select();
+            document.execCommand('copy');
+            alert('Código copiado al portapapeles');
+        });
+
+        document.getElementById("limpiar").addEventListener('click', () => {
+            document.getElementById("form").reset();
+            document.getElementById('camposTransporte').style.display = 'none';
+            ['ciudad', 'equipo', 'serial'].forEach(id => {
+                const select = document.getElementById(id);
+                select.innerHTML = "<option value=''>Seleccione una opción</option>";
+                select.disabled = true;
             });
         });
     }
 
-    function cargarSelects() {
+    function inicializarSelects() {
+        const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
         const clienteSelect = document.getElementById("cliente");
-        const ciudadSelect = document.getElementById("ciudad");
-        const equipoSelect = document.getElementById("equipo");
-        const serialSelect = document.getElementById("serial");
+        
+        clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
+        clientes.forEach(cliente => {
+            let option = document.createElement("option");
+            option.value = cliente;
+            option.textContent = cliente;
+            clienteSelect.appendChild(option);
+        });
+
         const actividadSelect = document.getElementById("actividad");
         const conceptoSelect = document.getElementById("concepto");
         const lugarInicialSelect = document.getElementById("lugarInicial");
         const lugarFinalSelect = document.getElementById("lugarFinal");
 
-        const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
-        const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
-        const equipos = [...new Set(baseDatos.map(item => item.EQUIPO))];
-        const seriales = [...new Set(baseDatos.map(item => item.SERIAL))];
-
-        llenarSelect(clienteSelect, Object.fromEntries(clientes.map(c => [c, c])));
-        llenarSelect(ciudadSelect, Object.fromEntries(ciudades.map(c => [c, c])));
-        llenarSelect(equipoSelect, Object.fromEntries(equipos.map(e => [e, e])));
-        llenarSelect(serialSelect, Object.fromEntries(seriales.map(s => [s, s])));
-        llenarSelect(actividadSelect, actividades);
-        llenarSelect(conceptoSelect, conceptos);
-        llenarSelect(lugarInicialSelect, lugaresTransporte);
-        llenarSelect(lugarFinalSelect, lugaresTransporte);
-
-        setupFiltradoProgresivo();
-    }
-
-    document.getElementById("concepto").addEventListener('change', (e) => {
-        const camposTransporte = document.getElementById('camposTransporte');
-        camposTransporte.style.display = e.target.value === 'TRANS' ? 'block' : 'none';
-    });
-
-    document.getElementById("copiar").addEventListener('click', () => {
-        const codigoInput = document.getElementById("codigo");
-        codigoInput.select();
-        document.execCommand('copy');
-        alert('Código copiado al portapapeles');
-    });
-
-    document.getElementById("limpiar").addEventListener('click', () => {
-        document.getElementById("form").reset();
-        document.getElementById('camposTransporte').style.display = 'none';
-        
-        const selects = ['ciudad', 'equipo', 'serial'];
-        selects.forEach(selectId => {
-            const select = document.getElementById(selectId);
-            select.innerHTML = "<option value=''>Seleccione una opción</option>";
-            select.disabled = true;
+        Object.entries(actividades).forEach(([key, value]) => {
+            let option = document.createElement("option");
+            option.value = value;
+            option.textContent = key;
+            actividadSelect.appendChild(option);
         });
-    });
+
+        Object.entries(conceptos).forEach(([key, value]) => {
+            let option = document.createElement("option");
+            option.value = value;
+            option.textContent = key;
+            conceptoSelect.appendChild(option);
+        });
+
+        Object.entries(lugaresTransporte).forEach(([key, value]) => {
+            let option = document.createElement("option");
+            option.value = value;
+            option.textContent = key;
+            lugarInicialSelect.appendChild(option);
+            
+            let optionFinal = document.createElement("option");
+            optionFinal.value = value;
+            optionFinal.textContent = key;
+            lugarFinalSelect.appendChild(optionFinal);
+        });
+    }
 
     document.getElementById("form").addEventListener("submit", event => {
         event.preventDefault();
@@ -215,5 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    cargarSelects();
+    inicializarSelects();
+    setupEventListeners();
 });
