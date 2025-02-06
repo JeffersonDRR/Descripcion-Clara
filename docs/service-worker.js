@@ -2,10 +2,11 @@ const CACHE_NAME = 'descripcion-clara-cache';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/css/styles.css',
-  '/js/scripts.js',
+  '/styles.css',
+  '/index.js',
   '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/icon-512x512.png',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
