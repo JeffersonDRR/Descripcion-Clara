@@ -139,7 +139,7 @@ function actualizarSelect(selectId, propiedad) {
     )];
     
     select.innerHTML = "<option value=''>Seleccione una opción</option>";
-    opciones.forEach(opcion => {
+    opciones.sort().forEach(opcion => {
         let option = document.createElement("option");
         option.value = opcion;
         option.textContent = opcion;
@@ -147,12 +147,17 @@ function actualizarSelect(selectId, propiedad) {
     });
     
     // Habilitar el select solo si hay opciones disponibles
-    select.disabled = opciones.length === 0;
-    
-    // Si solo hay una opción, seleccionarla automáticamente
-    if (opciones.length === 1) {
-        select.value = opciones[0];
-        select.dispatchEvent(new Event('change'));
+    if (opciones.length > 0) {
+        select.disabled = false;
+        
+        // Si solo hay una opción, seleccionarla automáticamente
+        if (opciones.length === 1) {
+            select.value = opciones[0];
+            select.dispatchEvent(new Event('change'));
+        }
+    } else {
+        // Si no hay opciones, deshabilitar y reiniciar
+        select.disabled = true;
     }
 }
 
@@ -212,6 +217,14 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarSelects();
 
     document.getElementById("cliente").addEventListener('change', () => {
+        // Resetear los campos subsiguientes
+        ['ciudad', 'equipo', 'serial'].forEach(id => {
+            const select = document.getElementById(id);
+            select.innerHTML = "<option value=''>Seleccione una opción</option>";
+            select.disabled = false;
+        });
+
+        // Actualizar las opciones basadas en el nuevo cliente seleccionado
         actualizarSelect("ciudad", "CIUDAD");
         actualizarSelect("equipo", "EQUIPO");
         actualizarSelect("serial", "SERIAL");
