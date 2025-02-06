@@ -1,160 +1,3 @@
-// Primero definimos todas las funciones
-function filtrarBaseDatos() {
-    let datosFiltrados = [...baseDatos];
-    const cliente = document.getElementById("cliente").value;
-    const ciudad = document.getElementById("ciudad").value;
-    const equipo = document.getElementById("equipo").value;
-
-    if (cliente) {
-        datosFiltrados = datosFiltrados.filter(item => item.CLIENTE === cliente);
-    }
-    if (ciudad) {
-        datosFiltrados = datosFiltrados.filter(item => item.CIUDAD === ciudad);
-    }
-    if (equipo) {
-        datosFiltrados = datosFiltrados.filter(item => item.EQUIPO === equipo);
-    }
-
-    return datosFiltrados;
-}
-
-function actualizarSelect(selectId, propiedad) {
-    const select = document.getElementById(selectId);
-    const datosFiltrados = filtrarBaseDatos();
-    const opciones = [...new Set(datosFiltrados.map(item => item[propiedad]))];
-    
-    select.innerHTML = "<option value=''>Seleccione una opción</option>";
-    opciones.forEach(opcion => {
-        let option = document.createElement("option");
-        option.value = opcion;
-        option.textContent = opcion;
-        select.appendChild(option);
-    });
-    
-    select.disabled = opciones.length === 0;
-    
-    if (opciones.length === 1) {
-        select.value = opciones[0];
-        select.dispatchEvent(new Event('change'));
-    }
-}
-
-function llenarSelect(select, opciones) {
-    select.innerHTML = "<option value=''>Seleccione una opción</option>";
-    Object.entries(opciones).forEach(([key, value]) => {
-        let option = document.createElement("option");
-        option.value = value;
-        option.textContent = key;
-        select.appendChild(option);
-    });
-}
-
-function limpiarFormulario() {
-    document.getElementById("form").reset();
-    document.getElementById('camposTransporte').style.display = 'none';
-    
-    ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
-        const select = document.getElementById(id);
-        select.innerHTML = "<option value=''>Seleccione una opción</option>";
-        if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
-            select.disabled = true;
-        }
-    });
-    
-    inicializarSelects();
-}
-
-function setupEventListeners() {
-    document.getElementById("cliente").addEventListener('change', () => {
-        actualizarSelect("ciudad", "CIUDAD");
-        actualizarSelect("equipo", "EQUIPO");
-        actualizarSelect("serial", "SERIAL");
-    });
-
-    document.getElementById("ciudad").addEventListener('change', () => {
-        actualizarSelect("equipo", "EQUIPO");
-        actualizarSelect("serial", "SERIAL");
-    });
-
-    document.getElementById("equipo").addEventListener('change', () => {
-        actualizarSelect("serial", "SERIAL");
-    });
-
-    document.getElementById("concepto").addEventListener('change', (e) => {
-        document.getElementById('camposTransporte').style.display = 
-            e.target.value === 'TRANS' ? 'block' : 'none';
-    });
-
-    document.getElementById("copiar").addEventListener('click', () => {
-        const codigoInput = document.getElementById("codigo");
-        codigoInput.select();
-        document.execCommand('copy');
-        alert('Código copiado al portapapeles');
-    });
-
-    document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
-
-    document.getElementById("form").addEventListener("submit", event => {
-        event.preventDefault();
-        const cliente = document.getElementById("cliente").value;
-        const ciudad = document.getElementById("ciudad").value;
-        const equipo = document.getElementById("equipo").value;
-        const serial = document.getElementById("serial").value;
-        const actividad = document.getElementById("actividad").value;
-        const concepto = document.getElementById("concepto").value;
-        const lugarInicial = document.getElementById("lugarInicial").value;
-        const lugarFinal = document.getElementById("lugarFinal").value;
-        const fecha = document.getElementById("fecha").value;
-        const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', { 
-            day: '2-digit', 
-            month: 'short'
-        }).toUpperCase();
-
-        const codigo = baseDatos.find(d => 
-            d.CLIENTE === cliente && 
-            d.EQUIPO === equipo && 
-            d.CIUDAD === ciudad && 
-            d.SERIAL === serial
-        )?.CODIGO || "";
-        
-        if (codigo && actividad && concepto) {
-            let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} ${fechaFormateada}`;
-            
-            if (concepto === 'TRANS') {
-                codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} ${fechaFormateada}`;
-            }
-
-            document.getElementById("codigo").value = codigoGenerado;
-        } else {
-            document.getElementById("codigo").value = "Datos incompletos";
-        }
-    });
-}
-
-function inicializarSelects() {
-    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
-    const clienteSelect = document.getElementById("cliente");
-    
-    clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
-    clientes.forEach(cliente => {
-        let option = document.createElement("option");
-        option.value = cliente;
-        option.textContent = cliente;
-        clienteSelect.appendChild(option);
-    });
-
-    const actividadSelect = document.getElementById("actividad");
-    const conceptoSelect = document.getElementById("concepto");
-    const lugarInicialSelect = document.getElementById("lugarInicial");
-    const lugarFinalSelect = document.getElementById("lugarFinal");
-
-    llenarSelect(actividadSelect, actividades);
-    llenarSelect(conceptoSelect, conceptos);
-    llenarSelect(lugarInicialSelect, lugaresTransporte);
-    llenarSelect(lugarFinalSelect, lugaresTransporte);
-}
-
-// Luego definimos las constantes
 const baseDatos = [
     { CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-100)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-100)' },
@@ -248,9 +91,162 @@ const lugaresTransporte = {
     "CIT": "CIT"
 };
 
-// Finalmente, inicializamos todo cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", () => {
-    window.onbeforeunload = limpiarFormulario;
+function filtrarBaseDatos() {
+    let datosFiltrados = [...baseDatos];
+    const cliente = document.getElementById("cliente").value;
+    const ciudad = document.getElementById("ciudad").value;
+    const equipo = document.getElementById("equipo").value;
+
+    if (cliente) {
+        datosFiltrados = datosFiltrados.filter(item => item.CLIENTE === cliente);
+    }
+    if (ciudad) {
+        datosFiltrados = datosFiltrados.filter(item => item.CIUDAD === ciudad);
+    }
+    if (equipo) {
+        datosFiltrados = datosFiltrados.filter(item => item.EQUIPO === equipo);
+    }
+
+    return datosFiltrados;
+}
+
+function actualizarSelect(selectId, propiedad) {
+    const select = document.getElementById(selectId);
+    const datosFiltrados = filtrarBaseDatos();
+    const opciones = [...new Set(datosFiltrados.map(item => item[propiedad]))];
+    
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    opciones.forEach(opcion => {
+        let option = document.createElement("option");
+        option.value = opcion;
+        option.textContent = opcion;
+        select.appendChild(option);
+    });
+    
+    select.disabled = opciones.length === 0;
+    
+    if (opciones.length === 1) {
+        select.value = opciones[0];
+        select.dispatchEvent(new Event('change'));
+    }
+}
+
+function llenarSelect(select, opciones) {
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    Object.entries(opciones).forEach(([key, value]) => {
+        let option = document.createElement("option");
+        option.value = value;
+        option.textContent = key;
+        select.appendChild(option);
+    });
+}
+
+function limpiarFormulario() {
+    document.getElementById("form").reset();
+    document.getElementById('camposTransporte').style.display = 'none';
+    document.getElementById('codigo').value = '';
+    
+    ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = "<option value=''>Seleccione una opción</option>";
+        if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
+            select.disabled = true;
+        }
+    });
+    
     inicializarSelects();
-    setupEventListeners();
+}
+
+function inicializarSelects() {
+    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
+    const clienteSelect = document.getElementById("cliente");
+    
+    clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
+    clientes.forEach(cliente => {
+        let option = document.createElement("option");
+        option.value = cliente;
+        option.textContent = cliente;
+        clienteSelect.appendChild(option);
+    });
+
+    const actividadSelect = document.getElementById("actividad");
+    const conceptoSelect = document.getElementById("concepto");
+    const lugarInicialSelect = document.getElementById("lugarInicial");
+    const lugarFinalSelect = document.getElementById("lugarFinal");
+
+    llenarSelect(actividadSelect, actividades);
+    llenarSelect(conceptoSelect, conceptos);
+    llenarSelect(lugarInicialSelect, lugaresTransporte);
+    llenarSelect(lugarFinalSelect, lugaresTransporte);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarSelects();
+
+    document.getElementById("cliente").addEventListener('change', () => {
+        actualizarSelect("ciudad", "CIUDAD");
+        actualizarSelect("equipo", "EQUIPO");
+        actualizarSelect("serial", "SERIAL");
+    });
+
+    document.getElementById("ciudad").addEventListener('change', () => {
+        actualizarSelect("equipo", "EQUIPO");
+        actualizarSelect("serial", "SERIAL");
+    });
+
+    document.getElementById("equipo").addEventListener('change', () => {
+        actualizarSelect("serial", "SERIAL");
+    });
+
+    document.getElementById("concepto").addEventListener('change', (e) => {
+        document.getElementById('camposTransporte').style.display = 
+            e.target.value === 'TRANS' ? 'block' : 'none';
+    });
+
+    document.getElementById("copiar").addEventListener('click', () => {
+        const codigoInput = document.getElementById("codigo");
+        codigoInput.select();
+        document.execCommand('copy');
+        alert('Código copiado al portapapeles');
+    });
+
+    document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
+
+    document.getElementById("form").addEventListener("submit", event => {
+        event.preventDefault();
+        const cliente = document.getElementById("cliente").value;
+        const ciudad = document.getElementById("ciudad").value;
+        const equipo = document.getElementById("equipo").value;
+        const serial = document.getElementById("serial").value;
+        const actividad = document.getElementById("actividad").value;
+        const concepto = document.getElementById("concepto").value;
+        const lugarInicial = document.getElementById("lugarInicial").value;
+        const lugarFinal = document.getElementById("lugarFinal").value;
+        const fecha = document.getElementById("fecha").value;
+        const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', { 
+            day: '2-digit', 
+            month: 'short'
+        }).toUpperCase();
+
+        const codigo = baseDatos.find(d => 
+            d.CLIENTE === cliente && 
+            d.EQUIPO === equipo && 
+            d.CIUDAD === ciudad && 
+            d.SERIAL === serial
+        )?.CODIGO || "";
+        
+        if (codigo && actividad && concepto) {
+            let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} ${fechaFormateada}`;
+            
+            if (concepto === 'TRANS') {
+                codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} ${fechaFormateada}`;
+            }
+
+            document.getElementById("codigo").value = codigoGenerado;
+        } else {
+            document.getElementById("codigo").value = "Datos incompletos";
+        }
+    });
+
+    window.addEventListener('beforeunload', limpiarFormulario);
 });
