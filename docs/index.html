@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Códigos Cubiscan</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .btn-rojo {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>Generador de Códigos Cubiscan</h1>
@@ -40,10 +50,20 @@
             <!-- Opciones se llenarán con JS -->
         </select>
 
+        <div id="camposTransporte" style="display:none;">
+            <label for="lugarInicial">Lugar Inicial</label>
+            <select id="lugarInicial"></select>
+
+            <label for="lugarFinal">Lugar Final</label>
+            <select id="lugarFinal"></select>
+        </div>
+
         <label for="codigo">Código</label>
         <input type="text" id="codigo" readonly>
 
-        <button type="submit">Generar Código</button>
+        <button type="submit" class="btn-rojo">Generar Código</button>
+        <button type="button" id="copiar" class="btn-rojo">Copiar</button>
+        <button type="button" id="limpiar" class="btn-rojo">Limpiar</button>
     </form>
 
     <script src="index.js"></script>

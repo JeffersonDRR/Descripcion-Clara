@@ -83,13 +83,53 @@ document.addEventListener("DOMContentLoaded", () => {
         "CLIENTE": "CLI"
     };
 
-    function llenarSelect(select, opciones) {
-        select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    const lugaresTransporte = {
+        "CLIENTE": "CLI", 
+        "HOTEL": "HOT", 
+        "CASA": "CAS", 
+        "AEROPUERTO": "AER", 
+        "OFICINA": "OFI", 
+        "CIT": "CIT"
+    };
+
+    function llenarSelect(select, opciones, valorPorDefecto = true) {
+        select.innerHTML = valorPorDefecto ? "<option value=''>Seleccione una opción</option>" : "";
         Object.keys(opciones).forEach(key => {
             let option = document.createElement("option");
             option.value = opciones[key];
             option.textContent = key;
             select.appendChild(option);
+        });
+    }
+
+    function filtrarOpciones(selectOrigen, selectDestino, propiedad) {
+        const valorSeleccionado = selectOrigen.value;
+        const opcionesFiltradas = [...new Set(baseDatos
+            .filter(item => item[propiedad.toUpperCase()] === valorSeleccionado)
+            .map(item => item[selectDestino.id.toUpperCase()])
+        )];
+
+        llenarSelect(selectDestino, Object.fromEntries(opcionesFiltradas.map(v => [v, v])), false);
+        selectDestino.disabled = opcionesFiltradas.length === 0;
+    }
+
+    function setupFiltradoProgresivo() {
+        const selects = ['cliente', 'ciudad', 'equipo', 'serial'];
+        
+        selects.forEach((selectId, index) => {
+            const selectActual = document.getElementById(selectId);
+            
+            selectActual.addEventListener('change', () => {
+                if (index < selects.length - 1) {
+                    const selectSiguiente = document.getElementById(selects[index + 1]);
+                    selectSiguiente.innerHTML = "<option value=''>Seleccione una opción</option>";
+                    selectSiguiente.disabled = true;
+                    
+                    if (selectActual.value) {
+                        filtrarOpciones(selectActual, selectSiguiente, selectId);
+                    }
+                }
+            });
         });
     }
 
@@ -100,6 +140,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const serialSelect = document.getElementById("serial");
         const actividadSelect = document.getElementById("actividad");
         const conceptoSelect = document.getElementById("concepto");
+        const lugarInicialSelect = document.getElementById("lugarInicial");
+        const lugarFinalSelect = document.getElementById("lugarFinal");
 
         const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
         const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
@@ -112,9 +154,35 @@ document.addEventListener("DOMContentLoaded", () => {
         llenarSelect(serialSelect, Object.fromEntries(seriales.map(s => [s, s])));
         llenarSelect(actividadSelect, actividades);
         llenarSelect(conceptoSelect, conceptos);
+        llenarSelect(lugarInicialSelect, lugaresTransporte);
+        llenarSelect(lugarFinalSelect, lugaresTransporte);
+
+        setupFiltradoProgresivo();
     }
 
-    cargarSelects();
+    document.getElementById("concepto").addEventListener('change', (e) => {
+        const camposTransporte = document.getElementById('camposTransporte');
+        camposTransporte.style.display = e.target.value === 'TRANS' ? 'block' : 'none';
+    });
+
+    document.getElementById("copiar").addEventListener('click', () => {
+        const codigoInput = document.getElementById("codigo");
+        codigoInput.select();
+        document.execCommand('copy');
+        alert('Código copiado al portapapeles');
+    });
+
+    document.getElementById("limpiar").addEventListener('click', () => {
+        document.getElementById("form").reset();
+        document.getElementById('camposTransporte').style.display = 'none';
+        
+        const selects = ['ciudad', 'equipo', 'serial'];
+        selects.forEach(selectId => {
+            const select = document.getElementById(selectId);
+            select.innerHTML = "<option value=''>Seleccione una opción</option>";
+            select.disabled = true;
+        });
+    });
 
     document.getElementById("form").addEventListener("submit", event => {
         event.preventDefault();
@@ -124,12 +192,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const serial = document.getElementById("serial").value;
         const actividad = document.getElementById("actividad").value;
         const concepto = document.getElementById("concepto").value;
-        const codigo = baseDatos.find(d => d.CLIENTE === cliente && d.EQUIPO === equipo && d.CIUDAD === ciudad && d.SERIAL === serial)?.CODIGO || "";
+        const lugarInicial = document.getElementById("lugarInicial").value;
+        const lugarFinal = document.getElementById("lugarFinal").value;
+
+        const codigo = baseDatos.find(d => 
+            d.CLIENTE === cliente && 
+            d.EQUIPO === equipo && 
+            d.CIUDAD === ciudad && 
+            d.SERIAL === serial
+        )?.CODIGO || "";
         
         if (codigo && actividad && concepto) {
-            document.getElementById("codigo").value = `${codigo} ${concepto} ${actividad} ${serial} 15 ENE`;
+            let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} 15 ENE`;
+            
+            if (concepto === 'TRANS') {
+                codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} 15 ENE`;
+            }
+
+            document.getElementById("codigo").value = codigoGenerado;
         } else {
             document.getElementById("codigo").value = "Datos incompletos";
         }
     });
+
+    cargarSelects();
 });
