@@ -1,4 +1,4 @@
-// Datos estáticos (simulando una base de datos)
+document.addEventListener("DOMContentLoaded", () => {
 const baseDatos = [
     { CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-100)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-100)' },
@@ -83,96 +83,53 @@ const conceptos = {
     "CLIENTE": "CLI"
 };
 
-// Elementos del DOM
-const clienteSelect = document.getElementById("cliente");
-const ciudadSelect = document.getElementById("ciudad");
-const equipoSelect = document.getElementById("equipo");
-const serialSelect = document.getElementById("serial");
-const actividadSelect = document.getElementById("actividad");
-const conceptoSelect = document.getElementById("concepto");
-const codigoInput = document.getElementById("codigo");
-const form = document.getElementById("form");
-
-// Cargar opciones en los selects
-function cargarSelects() {
-    const clientesUnicos = [...new Set(data.map(item => item.cliente))];
-    clientesUnicos.forEach(cliente => {
+function llenarSelect(select, opciones) {
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    Object.keys(opciones).forEach(key => {
         let option = document.createElement("option");
-        option.value = cliente;
-        option.textContent = cliente;
-        clienteSelect.appendChild(option);
-    });
-    
-    Object.keys(actividades).forEach(actividad => {
-        let option = document.createElement("option");
-        option.value = actividades[actividad];
-        option.textContent = actividad;
-        actividadSelect.appendChild(option);
-    });
-    
-    Object.keys(conceptos).forEach(concepto => {
-        let option = document.createElement("option");
-        option.value = conceptos[concepto];
-        option.textContent = concepto;
-        conceptoSelect.appendChild(option);
+        option.value = opciones[key];
+        option.textContent = key;
+        select.appendChild(option);
     });
 }
 
-// Filtrar datos progresivamente
-clienteSelect.addEventListener("change", function() {
-    ciudadSelect.innerHTML = "<option value=''>Seleccione una ciudad</option>";
-    equipoSelect.innerHTML = "<option value=''>Seleccione un equipo</option>";
-    serialSelect.innerHTML = "<option value=''>Seleccione un serial</option>";
+function cargarSelects() {
+    const clienteSelect = document.getElementById("cliente");
+    const ciudadSelect = document.getElementById("ciudad");
+    const equipoSelect = document.getElementById("equipo");
+    const serialSelect = document.getElementById("serial");
+    const actividadSelect = document.getElementById("actividad");
+    const conceptoSelect = document.getElementById("concepto");
 
-    const ciudades = [...new Set(data.filter(item => item.cliente === clienteSelect.value).map(item => item.ciudad))];
-    ciudades.forEach(ciudad => {
-        let option = document.createElement("option");
-        option.value = ciudad;
-        option.textContent = ciudad;
-        ciudadSelect.appendChild(option);
-    });
-});
+    const clientes = [...new Set(data.map(item => item.cliente))];
+    const ciudades = [...new Set(data.map(item => item.ciudad))];
+    const equipos = [...new Set(data.map(item => item.equipo))];
+    const seriales = [...new Set(data.map(item => item.serial))];
 
-ciudadSelect.addEventListener("change", function() {
-    equipoSelect.innerHTML = "<option value=''>Seleccione un equipo</option>";
-    serialSelect.innerHTML = "<option value=''>Seleccione un serial</option>";
+    llenarSelect(clienteSelect, Object.fromEntries(clientes.map(c => [c, c])));
+    llenarSelect(ciudadSelect, Object.fromEntries(ciudades.map(c => [c, c])));
+    llenarSelect(equipoSelect, Object.fromEntries(equipos.map(e => [e, e])));
+    llenarSelect(serialSelect, Object.fromEntries(seriales.map(s => [s, s])));
+    llenarSelect(actividadSelect, actividades);
+    llenarSelect(conceptoSelect, conceptos);
+}
 
-    const equipos = [...new Set(data.filter(item => item.ciudad === ciudadSelect.value).map(item => item.equipo))];
-    equipos.forEach(equipo => {
-        let option = document.createElement("option");
-        option.value = equipo;
-        option.textContent = equipo;
-        equipoSelect.appendChild(option);
-    });
-});
+cargarSelects();
 
-equipoSelect.addEventListener("change", function() {
-    serialSelect.innerHTML = "<option value=''>Seleccione un serial</option>";
-    const seriales = data.filter(item => item.equipo === equipoSelect.value && item.ciudad === ciudadSelect.value);
-    seriales.forEach(item => {
-        let option = document.createElement("option");
-        option.value = item.serial;
-        option.textContent = item.serial;
-        serialSelect.appendChild(option);
-    });
-});
-
-// Generar código
-form.addEventListener("submit", function(event) {
+document.getElementById("form").addEventListener("submit", event => {
     event.preventDefault();
-    const cliente = clienteSelect.value;
-    const ciudad = ciudadSelect.value;
-    const equipo = equipoSelect.value;
-    const serial = serialSelect.value;
-    const actividad = actividadSelect.value;
-    const concepto = conceptoSelect.value;
+    const cliente = document.getElementById("cliente").value;
+    const ciudad = document.getElementById("ciudad").value;
+    const equipo = document.getElementById("equipo").value;
+    const serial = document.getElementById("serial").value;
+    const actividad = document.getElementById("actividad").value;
+    const concepto = document.getElementById("concepto").value;
+    const codigo = data.find(d => d.cliente === cliente && d.equipo === equipo && d.ciudad === ciudad && d.serial === serial)?.codigo || "";
     
-    if (cliente && ciudad && equipo && serial && actividad && concepto) {
-        const codigoBase = data.find(item => item.cliente === cliente && item.equipo === equipo && item.serial === serial)?.codigo || "";
-        codigoInput.value = `${codigoBase} ${concepto} ${cliente}-${ciudad} ${actividad} ${serial} 15 ENE`;
+    if (codigo && actividad && concepto) {
+        document.getElementById("codigo").value = `${codigo} ${concepto} ${actividad} ${serial} 15 ENE`;
     } else {
-        alert("Por favor seleccione todas las opciones");
+        document.getElementById("codigo").value = "Datos incompletos";
     }
 });
-
-document.addEventListener("DOMContentLoaded", cargarSelects);
+});
