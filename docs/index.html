@@ -4,109 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Códigos Cubiscan</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: white;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 20px;
-            border: none;
-            border-bottom: 1px solid #ccc;
-            font-size: 16px;
-            background: transparent;
-        }
-
-        label {
-            font-size: 16px;
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        button {
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
-        }
-
-        #codigo {
-            border: none;
-            font-size: 18px;
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f5f5f5;
-        }
-
-        .buttons-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .buttons-container button {
-            flex: 1;
-        }
-
-        #camposTransporte {
-            margin-top: 20px;
-        }
-
-        h2 {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1>Generador de Códigos Cubiscan</h1>
+
     <form id="form">
         <label for="actividad">Actividad</label>
-        <select id="actividad"></select>
+        <select id="actividad" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+        </select>
 
         <label for="cliente">Cliente</label>
-        <select id="cliente"></select>
+        <select id="cliente" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+        </select>
 
         <label for="ciudad">Ciudad</label>
-        <select id="ciudad"></select>
+        <select id="ciudad" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+        </select>
 
         <label for="equipo">Equipo</label>
-        <select id="equipo"></select>
+        <select id="equipo" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+        </select>
 
         <label for="serial">Serial</label>
-        <select id="serial"></select>
+        <select id="serial" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+        </select>
 
         <label for="concepto">Concepto</label>
-        <select id="concepto"></select>
+        <select id="concepto" required>
+            <option value="" disabled selected>Seleccione una opción</option>
+        </select>
 
         <div id="camposTransporte" style="display:none;">
             <label for="lugarInicial">Lugar Inicial</label>
-            <select id="lugarInicial"></select>
+            <select id="lugarInicial" required>
+                <option value="" disabled selected>Seleccione una opción</option>
+            </select>
 
             <label for="lugarFinal">Lugar Final</label>
-            <select id="lugarFinal"></select>
+            <select id="lugarFinal" required>
+                <option value="" disabled selected>Seleccione una opción</option>
+            </select>
         </div>
 
         <label for="fecha">Fecha</label>
-        <input type="date" id="fecha" value="2025-02-06">
+        <input type="date" id="fecha" required value="2025-02-06">
 
-        <button type="submit">Generar Código</button>
-
-        <h2>Código Generado</h2>
+        <label for="codigo">Código</label>
         <input type="text" id="codigo" readonly>
 
+        <button type="submit">Generar Código</button>
+        
         <div class="buttons-container">
             <button type="button" id="copiar">Copiar</button>
             <button type="button" id="limpiar">Limpiar</button>
