@@ -9,71 +9,75 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4a90e2">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Descripción Clara">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Descripción Clara</h1>
-    <div class="container">
-        <form id="form">
-            <label for="actividad">Actividad</label>
-            <select id="actividad" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-
-            <label for="cliente">Cliente</label>
-            <select id="cliente" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-
-            <label for="ciudad">Ciudad</label>
-            <select id="ciudad" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-
-            <label for="equipo">Equipo</label>
-            <select id="equipo" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-
-            <label for="serial">Serial</label>
-            <select id="serial" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-
-            <label for="concepto">Concepto</label>
-            <select id="concepto" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-            </select>
-
-            <div id="camposTransporte" style="display:none;">
-                <label for="lugarInicial">Lugar Inicial</label>
-                <select id="lugarInicial" required>
+    <div class="app-container">
+        <h1>Descripción Clara</h1>
+        <div class="container">
+            <form id="form">
+                <label for="actividad">Actividad</label>
+                <select id="actividad" required>
                     <option value="" disabled selected>Seleccione una opción</option>
                 </select>
 
-                <label for="lugarFinal">Lugar Final</label>
-                <select id="lugarFinal" required>
+                <label for="cliente">Cliente</label>
+                <select id="cliente" required>
                     <option value="" disabled selected>Seleccione una opción</option>
                 </select>
-            </div>
 
-            <label for="fecha">Fecha</label>
-            <input type="date" id="fecha" required value="2025-02-06">
+                <label for="ciudad">Ciudad</label>
+                <select id="ciudad" required>
+                    <option value="" disabled selected>Seleccione una opción</option>
+                </select>
 
-            <label for="codigo">Código Generado</label>
-            <input type="text" id="codigo" readonly>
+                <label for="equipo">Equipo</label>
+                <select id="equipo" required>
+                    <option value="" disabled selected>Seleccione una opción</option>
+                </select>
 
-            <button type="submit">Generar Código</button>
-            
-            <div class="buttons-container">
-                <button type="button" id="copiar">Copiar</button>
-                <button type="button" id="limpiar">Limpiar</button>
-            </div>
-        </form>
+                <label for="serial">Serial</label>
+                <select id="serial" required>
+                    <option value="" disabled selected>Seleccione una opción</option>
+                </select>
+
+                <label for="concepto">Concepto</label>
+                <select id="concepto" required>
+                    <option value="" disabled selected>Seleccione una opción</option>
+                </select>
+
+                <div id="camposTransporte" style="display:none;">
+                    <label for="lugarInicial">Lugar Inicial</label>
+                    <select id="lugarInicial" required>
+                        <option value="" disabled selected>Seleccione una opción</option>
+                    </select>
+
+                    <label for="lugarFinal">Lugar Final</label>
+                    <select id="lugarFinal" required>
+                        <option value="" disabled selected>Seleccione una opción</option>
+                    </select>
+                </div>
+
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" required value="2025-02-06">
+
+                <label for="codigo">Código Generado</label>
+                <input type="text" id="codigo" readonly>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Generar Código</button>
+                    
+                    <div class="buttons-container">
+                        <button type="button" id="copiar" class="btn-secondary">Copiar</button>
+                        <button type="button" id="limpiar" class="btn-secondary">Limpiar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="index.js"></script>
