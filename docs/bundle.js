@@ -1,10 +1,9 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swPath = location.pathname.includes('github.io') 
-      ? '/DescripcionClara.Web/docs/service-worker.js'
-      : '/service-worker.js';
-      
-    navigator.serviceWorker.register(swPath)
+    const swPath = '/DescripcionClara.Web/docs/service-worker.js';
+    const swScope = '/DescripcionClara.Web/docs/';
+    
+    navigator.serviceWorker.register(swPath, { scope: swScope })
       .then((registration) => {
         console.log('Service Worker registrado con éxito:', registration);
       })
