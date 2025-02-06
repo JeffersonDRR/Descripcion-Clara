@@ -1,7 +1,7 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swPath = '/DescripcionClara.Web/docs/service-worker.js';
-    const swScope = '/DescripcionClara.Web/docs/';
+    const swPath = '/Descripcion-Clara/docs/service-worker.js';
+    const swScope = '/Descripcion-Clara/docs/';
     
     navigator.serviceWorker.register(swPath, { scope: swScope })
       .then((registration) => {
