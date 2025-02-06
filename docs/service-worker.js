@@ -1,14 +1,13 @@
 const CACHE_NAME = 'descripcion-clara-cache';
-const BASE_PATH = '/DescripcionClara.Web/docs/';
 const urlsToCache = [
-  BASE_PATH,
-  BASE_PATH + 'index.html',
-  BASE_PATH + 'styles.css',
-  BASE_PATH + 'index.js',
-  BASE_PATH + 'bundle.js',
-  BASE_PATH + 'icon-192x192.png',
-  BASE_PATH + 'icon-512x512.png',
-  BASE_PATH + 'manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './index.js',
+  './bundle.js',
+  './icon-192x192.png',
+  './icon-512x512.png',
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
