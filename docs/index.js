@@ -1,4 +1,3 @@
-// Datos estáticos (simulando una base de datos)
 const baseDatos = [
     { CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-100)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-100)' },
@@ -61,102 +60,193 @@ const baseDatos = [
     { CLIENTE: 'TIA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'GUAYAQUIL', SERIAL: '19031006', CODIGO: '(9000-100)' }
 ];
 
-// Referencias a las listas desplegables
-const clienteSelect = document.getElementById('cliente');
-const ciudadSelect = document.getElementById('ciudad');
-const equipoSelect = document.getElementById('equipo');
-const serialSelect = document.getElementById('serial');
+const actividades = {
+    "MANTENIMIENTO PREVENTIVO": "MAN P",
+    "MANTENIMIENTO CORRECTIVO": "MAN C",
+    "VISITA EXTRA": "VIS EXT",
+    "INSTALACIÓN": "INS",
+    "GARANTÍA": "GAR"
+};
 
-// Función para llenar las listas desplegables
-function llenarListas() {
+const conceptos = {
+    "TRANSPORTE": "TRANS",
+    "CENA": "CENA",
+    "ALMUERZO": "ALMU",
+    "DESAYUNO": "DES",
+    "HERRAMIENTA": "HERR",
+    "HOTEL": "HOT",
+    "CAFETERIA": "CAF",
+    "BIENESTAR": "BIEN",
+    "ASEO": "ASE",
+    "PAGO POR EQUIVOCACIÓN": "CXC",
+    "CLIENTE": "CLI"
+};
+
+const lugaresTransporte = {
+    "CLIENTE": "CLI", 
+    "HOTEL": "HOT", 
+    "CASA": "CAS", 
+    "AEROPUERTO": "AER", 
+    "OFICINA": "OFI", 
+    "CIT": "CIT"
+};
+
+function filtrarBaseDatos() {
+    let datosFiltrados = [...baseDatos];
+    const cliente = document.getElementById("cliente").value;
+    const ciudad = document.getElementById("ciudad").value;
+    const equipo = document.getElementById("equipo").value;
+
+    if (cliente) {
+        datosFiltrados = datosFiltrados.filter(item => item.CLIENTE === cliente);
+    }
+    if (ciudad) {
+        datosFiltrados = datosFiltrados.filter(item => item.CIUDAD === ciudad);
+    }
+    if (equipo) {
+        datosFiltrados = datosFiltrados.filter(item => item.EQUIPO === equipo);
+    }
+
+    return datosFiltrados;
+}
+
+function actualizarSelect(selectId, propiedad) {
+    const select = document.getElementById(selectId);
+    const datosFiltrados = filtrarBaseDatos();
+    const opciones = [...new Set(datosFiltrados.map(item => item[propiedad]))];
+    
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    opciones.forEach(opcion => {
+        let option = document.createElement("option");
+        option.value = opcion;
+        option.textContent = opcion;
+        select.appendChild(option);
+    });
+    
+    select.disabled = opciones.length === 0;
+    
+    if (opciones.length === 1) {
+        select.value = opciones[0];
+        select.dispatchEvent(new Event('change'));
+    }
+}
+
+function llenarSelect(select, opciones) {
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    Object.entries(opciones).forEach(([key, value]) => {
+        let option = document.createElement("option");
+        option.value = value;
+        option.textContent = key;
+        select.appendChild(option);
+    });
+}
+
+function limpiarFormulario() {
+    document.getElementById("form").reset();
+    document.getElementById('camposTransporte').style.display = 'none';
+    document.getElementById('codigo').value = '';
+    
+    ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = "<option value=''>Seleccione una opción</option>";
+        if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
+            select.disabled = true;
+        }
+    });
+    
+    inicializarSelects();
+}
+
+function inicializarSelects() {
     const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
-    const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
-
-    // Llenar Cliente
+    const clienteSelect = document.getElementById("cliente");
+    
+    clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
     clientes.forEach(cliente => {
-        const option = document.createElement('option');
+        let option = document.createElement("option");
         option.value = cliente;
         option.textContent = cliente;
         clienteSelect.appendChild(option);
     });
 
-    // Llenar Ciudad
-    ciudades.forEach(ciudad => {
-        const option = document.createElement('option');
-        option.value = ciudad;
-        option.textContent = ciudad;
-        ciudadSelect.appendChild(option);
-    });
+    const actividadSelect = document.getElementById("actividad");
+    const conceptoSelect = document.getElementById("concepto");
+    const lugarInicialSelect = document.getElementById("lugarInicial");
+    const lugarFinalSelect = document.getElementById("lugarFinal");
+
+    llenarSelect(actividadSelect, actividades);
+    llenarSelect(conceptoSelect, conceptos);
+    llenarSelect(lugarInicialSelect, lugaresTransporte);
+    llenarSelect(lugarFinalSelect, lugaresTransporte);
 }
 
-// Referencias a las listas desplegables
-const clienteSelect = document.getElementById('cliente');
-const ciudadSelect = document.getElementById('ciudad');
-const equipoSelect = document.getElementById('equipo');
-const serialSelect = document.getElementById('serial');
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarSelects();
 
-// Función para llenar las listas desplegables
-function llenarListas() {
-    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
-    const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
-
-    // Log para depurar
-    console.log('Clientes:', clientes);
-    console.log('Ciudades:', ciudades);
-
-    // Llenar Cliente
-    clientes.forEach(cliente => {
-        const option = document.createElement('option');
-        option.value = cliente;
-        option.textContent = cliente;
-        clienteSelect.appendChild(option);
+    document.getElementById("cliente").addEventListener('change', () => {
+        actualizarSelect("ciudad", "CIUDAD");
+        actualizarSelect("equipo", "EQUIPO");
+        actualizarSelect("serial", "SERIAL");
     });
 
-    // Llenar Ciudad
-    ciudades.forEach(ciudad => {
-        const option = document.createElement('option');
-        option.value = ciudad;
-        option.textContent = ciudad;
-        ciudadSelect.appendChild(option);
+    document.getElementById("ciudad").addEventListener('change', () => {
+        actualizarSelect("equipo", "EQUIPO");
+        actualizarSelect("serial", "SERIAL");
     });
-}
 
-// Función para actualizar los equipos según el cliente y ciudad seleccionados
-function actualizarEquiposYSeriales() {
-    const clienteSeleccionado = clienteSelect.value;
-    const ciudadSeleccionada = ciudadSelect.value;
-
-    console.log('Cliente seleccionado:', clienteSeleccionado);
-    console.log('Ciudad seleccionada:', ciudadSeleccionada);
-
-    // Filtrar los datos según el cliente y la ciudad seleccionados
-    const equiposFiltrados = baseDatos.filter(item => 
-        item.CLIENTE === clienteSeleccionado && item.CIUDAD === ciudadSeleccionada
-    );
-
-    // Log para depurar
-    console.log('Equipos filtrados:', equiposFiltrados);
-
-    // Limpiar y llenar el campo de equipos
-    equipoSelect.innerHTML = '';
-    serialSelect.innerHTML = '';
-
-    equiposFiltrados.forEach(item => {
-        const equipoOption = document.createElement('option');
-        equipoOption.value = item.EQUIPO;
-        equipoOption.textContent = item.EQUIPO;
-        equipoSelect.appendChild(equipoOption);
-
-        const serialOption = document.createElement('option');
-        serialOption.value = item.SERIAL;
-        serialOption.textContent = item.SERIAL;
-        serialSelect.appendChild(serialOption);
+    document.getElementById("equipo").addEventListener('change', () => {
+        actualizarSelect("serial", "SERIAL");
     });
-}
 
-// Agregar los eventos de cambio para las listas desplegables
-clienteSelect.addEventListener('change', actualizarEquiposYSeriales);
-ciudadSelect.addEventListener('change', actualizarEquiposYSeriales);
+    document.getElementById("concepto").addEventListener('change', (e) => {
+        document.getElementById('camposTransporte').style.display = 
+            e.target.value === 'TRANS' ? 'block' : 'none';
+    });
 
-// Llamar a la función para llenar las listas iniciales
-llenarListas();
+    document.getElementById("copiar").addEventListener('click', () => {
+        const codigoInput = document.getElementById("codigo");
+        codigoInput.select();
+        document.execCommand('copy');
+        alert('Código copiado al portapapeles');
+    });
+
+    document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
+
+    document.getElementById("form").addEventListener("submit", event => {
+        event.preventDefault();
+        const cliente = document.getElementById("cliente").value;
+        const ciudad = document.getElementById("ciudad").value;
+        const equipo = document.getElementById("equipo").value;
+        const serial = document.getElementById("serial").value;
+        const actividad = document.getElementById("actividad").value;
+        const concepto = document.getElementById("concepto").value;
+        const lugarInicial = document.getElementById("lugarInicial").value;
+        const lugarFinal = document.getElementById("lugarFinal").value;
+        const fecha = document.getElementById("fecha").value;
+        const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', { 
+            day: '2-digit', 
+            month: 'short'
+        }).toUpperCase();
+
+        const codigo = baseDatos.find(d => 
+            d.CLIENTE === cliente && 
+            d.EQUIPO === equipo && 
+            d.CIUDAD === ciudad && 
+            d.SERIAL === serial
+        )?.CODIGO || "";
+        
+        if (codigo && actividad && concepto) {
+            let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} ${fechaFormateada}`;
+            
+            if (concepto === 'TRANS') {
+                codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} ${fechaFormateada}`;
+            }
+
+            document.getElementById("codigo").value = codigoGenerado;
+        } else {
+            document.getElementById("codigo").value = "Datos incompletos";
+        }
+    });
+
+    window.addEventListener('beforeunload', limpiarFormulario);
+});
