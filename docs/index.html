@@ -4,51 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Códigos Cubiscan</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
-        .btn-rojo {
-            background-color: red;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            font-size: 16px;
+            background: transparent;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background-color: #ff0000;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
             cursor: pointer;
-            margin: 5px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        #codigo {
+            border: none;
+            font-size: 18px;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .buttons-container button {
+            flex: 1;
+        }
+
+        #camposTransporte {
+            margin-top: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <h1>Generador de Códigos Cubiscan</h1>
-
     <form id="form">
+        <label for="actividad">Actividad</label>
+        <select id="actividad"></select>
+
         <label for="cliente">Cliente</label>
-        <select id="cliente">
-            <!-- Opciones se llenarán con JS -->
-        </select>
+        <select id="cliente"></select>
 
         <label for="ciudad">Ciudad</label>
-        <select id="ciudad">
-            <!-- Opciones se llenarán con JS -->
-        </select>
+        <select id="ciudad"></select>
 
         <label for="equipo">Equipo</label>
-        <select id="equipo">
-            <!-- Opciones se llenarán con JS -->
-        </select>
+        <select id="equipo"></select>
 
         <label for="serial">Serial</label>
-        <select id="serial">
-            <!-- Opciones se llenarán con JS -->
-        </select>
-
-        <label for="actividad">Actividad</label>
-        <select id="actividad">
-            <!-- Opciones se llenarán con JS -->
-        </select>
+        <select id="serial"></select>
 
         <label for="concepto">Concepto</label>
-        <select id="concepto">
-            <!-- Opciones se llenarán con JS -->
-        </select>
+        <select id="concepto"></select>
 
         <div id="camposTransporte" style="display:none;">
             <label for="lugarInicial">Lugar Inicial</label>
@@ -58,12 +99,18 @@
             <select id="lugarFinal"></select>
         </div>
 
-        <label for="codigo">Código</label>
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" value="2025-02-06">
+
+        <button type="submit">Generar Código</button>
+
+        <h2>Código Generado</h2>
         <input type="text" id="codigo" readonly>
 
-        <button type="submit" class="btn-rojo">Generar Código</button>
-        <button type="button" id="copiar" class="btn-rojo">Copiar</button>
-        <button type="button" id="limpiar" class="btn-rojo">Limpiar</button>
+        <div class="buttons-container">
+            <button type="button" id="copiar">Copiar</button>
+            <button type="button" id="limpiar">Limpiar</button>
+        </div>
     </form>
 
     <script src="index.js"></script>
