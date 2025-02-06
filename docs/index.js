@@ -1,3 +1,8 @@
+window.onbeforeunload = function() {
+    localStorage.clear();
+    document.getElementById("form").reset();
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     const baseDatos = [
         { CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-100)' },
@@ -61,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { CLIENTE: 'TIA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'GUAYAQUIL', SERIAL: '19031006', CODIGO: '(9000-100)' }
     ];
 
-    const actividades = {
+    onst actividades = {
         "MANTENIMIENTO PREVENTIVO": "MAN P",
         "MANTENIMIENTO CORRECTIVO": "MAN C",
         "VISITA EXTRA": "VIS EXT",
@@ -125,6 +130,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         
         select.disabled = opciones.length === 0;
+        
+        // Selección automática si solo hay una opción
+        if (opciones.length === 1) {
+            select.value = opciones[0];
+            // Disparar evento change para actualizar dependientes
+            select.dispatchEvent(new Event('change'));
+        }
     }
 
     function setupEventListeners() {
