@@ -269,11 +269,13 @@ document.addEventListener("DOMContentLoaded", () => {
             month: 'short'
         }).toUpperCase();
 
+        // Modificación clave: búsqueda más flexible de código
         const codigo = baseDatos.find(d => 
-            d.CLIENTE === cliente && 
-            d.EQUIPO === equipo && 
-            d.CIUDAD === ciudad && 
-            d.SERIAL === serial
+            (d.CLIENTE === cliente || 
+             (cliente === 'TCC' && d.CLIENTE.includes('TCC'))) && 
+            (d.EQUIPO === equipo || d.EQUIPO === '') && 
+            (d.CIUDAD === ciudad || d.CIUDAD === '') && 
+            (d.SERIAL === serial || d.SERIAL === '')
         )?.CODIGO || "";
         
         if (codigo && actividad && concepto) {
@@ -285,7 +287,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.getElementById("codigo").value = codigoGenerado;
         } else {
-            document.getElementById("codigo").value = "Datos incompletos";
+            // Depuración para entender por qué no se genera el código
+            console.log('Datos para generación de código:', {
+                cliente,
+                ciudad,
+                equipo,
+                serial,
+                actividad,
+                concepto,
+                codigo: codigo
+            });
+            document.getElementById("codigo").value = "No se pudo generar el código";
         }
     });
 
