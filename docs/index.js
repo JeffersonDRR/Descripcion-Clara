@@ -313,7 +313,6 @@ const actividades = {
             } catch (err) {
                 codigoInput.select();
                 document.execCommand('copy');
-                showNotification('Código copiado al portapapeles');
             }
         });
     
