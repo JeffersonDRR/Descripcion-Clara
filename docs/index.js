@@ -34,7 +34,7 @@ document.getElementById("form").addEventListener("submit", event => {
         return;
     }
  
-    let codigoGenerado = `${codigo} ${concepto} ${actividad} ${actividad === 'INT' ? '' : serial} ${fechaFormateada}`;
+    let codigoGenerado = `${codigo} ${concepto} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
     
     if (concepto === 'TRANS') {
         const transporteVisible = document.getElementById('camposTransporte').style.display !== 'none';
@@ -44,12 +44,13 @@ document.getElementById("form").addEventListener("submit", event => {
         }
  
         if (transporteVisible) {
-            codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${actividad === 'INT' ? '' : serial} ${fechaFormateada}`;
+            codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
         }
     }
  
     document.getElementById("codigo").value = codigoGenerado;
- });const baseDatos = [
+ });
+ const baseDatos = [
 	{ CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-101)' },
     { CLIENTE: 'AVON', EQUIPO: 'CUBISCAN 125', CIUDAD: 'MEDELLÍN', SERIAL: '7130697', CODIGO: '(5000-102)' },
