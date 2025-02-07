@@ -13,8 +13,7 @@ document.getElementById("form").addEventListener("submit", event => {
         day: '2-digit', 
         month: 'short'
     }).toUpperCase();
-
-    // Búsqueda más flexible de código
+ 
     const codigo = baseDatos.find(d => 
         (d.CLIENTE === cliente || 
          (cliente === 'TCC' && d.CLIENTE.includes('TCC'))) && 
@@ -23,8 +22,7 @@ document.getElementById("form").addEventListener("submit", event => {
         (d.SERIAL === serial || d.SERIAL === '')
     )?.CODIGO || "";
     
-    // Validar campos requeridos
-    if (!cliente || !actividad || !concepto || !serial || !codigo) {
+    if (!cliente || !actividad || !concepto || (!serial && actividad !== 'INT') || !codigo) {
         console.log('Datos incompletos:', {
             cliente,
             actividad,
@@ -35,27 +33,23 @@ document.getElementById("form").addEventListener("submit", event => {
         document.getElementById("codigo").value = "Datos incompletos";
         return;
     }
-
-    // Generar código base
-    let codigoGenerado = `${codigo} ${concepto} ${actividad} ${serial} ${fechaFormateada}`;
+ 
+    let codigoGenerado = `${codigo} ${concepto} ${actividad} ${actividad === 'INT' ? '' : serial} ${fechaFormateada}`;
     
-    // Manejar conceptos de transporte
     if (concepto === 'TRANS') {
-        // Validar lugares para transporte si los campos de transporte están visibles
         const transporteVisible = document.getElementById('camposTransporte').style.display !== 'none';
         if (transporteVisible && (!lugarInicial || !lugarFinal)) {
             document.getElementById("codigo").value = "Seleccione lugares de transporte";
             return;
         }
-
-        // Si los campos de transporte están visibles, incluir lugares en el código
+ 
         if (transporteVisible) {
-            codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${serial} ${fechaFormateada}`;
+            codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad} ${actividad === 'INT' ? '' : serial} ${fechaFormateada}`;
         }
     }
-
+ 
     document.getElementById("codigo").value = codigoGenerado;
-});const baseDatos = [
+ });const baseDatos = [
 	{ CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-101)' },
     { CLIENTE: 'AVON', EQUIPO: 'CUBISCAN 125', CIUDAD: 'MEDELLÍN', SERIAL: '7130697', CODIGO: '(5000-102)' },
@@ -130,9 +124,9 @@ const actividades = {
     "VISITA EXTRA": "VIS EXT",
     "INSTALACIÓN": "INS",
     "GARANTÍA": "GAR"
-    };
-    
-    const conceptos = {
+ };
+ 
+ const conceptos = {
     "TRANSPORTE": "TRANS",
     "CENA": "CENA",
     "ALMUERZO": "ALMU",
@@ -144,181 +138,188 @@ const actividades = {
     "ASEO": "ASE",
     "PAGO POR EQUIVOCACIÓN": "CXC",
     "CLIENTE": "CLI"
-    };
-    
-    const lugaresTransporte = {
+ };
+ 
+ const lugaresTransporte = {
     "CLIENTE": "CLI", 
     "HOTEL": "HOT", 
     "CASA": "CAS", 
     "AEROPUERTO": "AER", 
     "OFICINA": "OFI", 
     "CIT": "CIT"
-    };
-    
-    function filtrarBaseDatos() {
-        let datosFiltrados = [...baseDatos];
-        const cliente = document.getElementById("cliente").value;
-        const ciudad = document.getElementById("ciudad").value;
-        const equipo = document.getElementById("equipo").value;
-    
-        if (cliente) {
-            datosFiltrados = datosFiltrados.filter(item => 
-                item.CLIENTE === cliente || 
-                (item.CLIENTE.includes('TCC') && cliente.includes('TCC'))
-            );
-        }
-        if (ciudad) {
-            datosFiltrados = datosFiltrados.filter(item => 
-                item.CIUDAD === ciudad || item.CIUDAD === ''
-            );
-        }
-        if (equipo) {
-            datosFiltrados = datosFiltrados.filter(item => 
-                item.EQUIPO === equipo || item.EQUIPO === ''
-            );
-        }
-    
-        return datosFiltrados;
+ };
+ 
+ function filtrarBaseDatos() {
+    let datosFiltrados = [...baseDatos];
+    const cliente = document.getElementById("cliente").value;
+    const ciudad = document.getElementById("ciudad").value;
+    const equipo = document.getElementById("equipo").value;
+ 
+    if (cliente) {
+        datosFiltrados = datosFiltrados.filter(item => 
+            item.CLIENTE === cliente || 
+            (item.CLIENTE.includes('TCC') && cliente.includes('TCC'))
+        );
     }
-    
-    function actualizarSelect(selectId, propiedad) {
-        const select = document.getElementById(selectId);
-        const datosFiltrados = filtrarBaseDatos();
-    
-        const opciones = [...new Set(
-            datosFiltrados
-                .map(item => item[propiedad])
-                .filter(valor => valor !== '')
-        )];
-    
+    if (ciudad) {
+        datosFiltrados = datosFiltrados.filter(item => 
+            item.CIUDAD === ciudad || item.CIUDAD === ''
+        );
+    }
+    if (equipo) {
+        datosFiltrados = datosFiltrados.filter(item => 
+            item.EQUIPO === equipo || item.EQUIPO === ''
+        );
+    }
+ 
+    return datosFiltrados;
+ }
+ 
+ function actualizarSelect(selectId, propiedad) {
+    const select = document.getElementById(selectId);
+    const datosFiltrados = filtrarBaseDatos();
+ 
+    const opciones = [...new Set(
+        datosFiltrados
+            .map(item => item[propiedad])
+            .filter(valor => valor !== '')
+    )];
+ 
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    opciones.sort().forEach(opcion => {
+        let option = document.createElement("option");
+        option.value = opcion;
+        option.textContent = opcion;
+        select.appendChild(option);
+    });
+ 
+    if (opciones.length > 0) {
+        select.disabled = false;
+        if (opciones.length === 1) {
+            select.value = opciones[0];
+            select.dispatchEvent(new Event('change'));
+        }
+    } else {
+        select.disabled = true;
+    }
+ }
+ 
+ function llenarSelect(select, opciones) {
+    select.innerHTML = "<option value=''>Seleccione una opción</option>";
+    Object.entries(opciones).forEach(([key, value]) => {
+        let option = document.createElement("option");
+        option.value = value;
+        option.textContent = key;
+        select.appendChild(option);
+    });
+ }
+ 
+ function limpiarFormulario() {
+    document.getElementById("form").reset();
+    document.getElementById('camposTransporte').style.display = 'none';
+    document.getElementById('codigo').value = '';
+ 
+    ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
+        const select = document.getElementById(id);
         select.innerHTML = "<option value=''>Seleccione una opción</option>";
-        opciones.sort().forEach(opcion => {
-            let option = document.createElement("option");
-            option.value = opcion;
-            option.textContent = opcion;
-            select.appendChild(option);
-        });
-    
-        if (opciones.length > 0) {
-            select.disabled = false;
-            if (opciones.length === 1) {
-                select.value = opciones[0];
-                select.dispatchEvent(new Event('change'));
-            }
-        } else {
+        if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
             select.disabled = true;
         }
+    });
+ 
+    inicializarSelects();
+ }
+ 
+ function inicializarSelects() {
+    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))]
+        .map(cliente => cliente.includes('TCC') ? 'TCC' : cliente);
+ 
+    const clienteSelect = document.getElementById("cliente");
+ 
+    clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
+    [...new Set(clientes)].forEach(cliente => {
+        let option = document.createElement("option");
+        option.value = cliente;
+        option.textContent = cliente;
+        clienteSelect.appendChild(option);
+    });
+ 
+    const actividadSelect = document.getElementById("actividad");
+    const conceptoSelect = document.getElementById("concepto");
+    const lugarInicialSelect = document.getElementById("lugarInicial");
+    const lugarFinalSelect = document.getElementById("lugarFinal");
+ 
+    llenarSelect(actividadSelect, actividades);
+    llenarSelect(conceptoSelect, conceptos);
+    llenarSelect(lugarInicialSelect, lugaresTransporte);
+    llenarSelect(lugarFinalSelect, lugaresTransporte);
+ }
+ 
+ function showNotification(message) {
+    let notification = document.querySelector('.notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.className = 'notification';
+        document.body.appendChild(notification);
     }
     
-    function llenarSelect(select, opciones) {
-        select.innerHTML = "<option value=''>Seleccione una opción</option>";
-        Object.entries(opciones).forEach(([key, value]) => {
-            let option = document.createElement("option");
-            option.value = value;
-            option.textContent = key;
-            select.appendChild(option);
-        });
-    }
+    notification.textContent = message;
+    notification.classList.add('show');
     
-    function limpiarFormulario() {
-        document.getElementById("form").reset();
-        document.getElementById('camposTransporte').style.display = 'none';
-        document.getElementById('codigo').value = '';
-    
-        ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 2000);
+ }
+ 
+ document.addEventListener("DOMContentLoaded", () => {
+    inicializarSelects();
+ 
+    document.getElementById("actividad").addEventListener('change', (e) => {
+        if (e.target.value === 'INT') {
+            document.getElementById("cliente").value = 'MONTRA COLOMBIA SAS';
+            document.getElementById("cliente").dispatchEvent(new Event('change'));
+        }
+    });
+ 
+    document.getElementById("cliente").addEventListener('change', () => {
+        ['ciudad', 'equipo', 'serial'].forEach(id => {
             const select = document.getElementById(id);
             select.innerHTML = "<option value=''>Seleccione una opción</option>";
-            if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
-                select.disabled = true;
-            }
+            select.disabled = false;
         });
-    
-        inicializarSelects();
-    }
-    
-    function inicializarSelects() {
-        const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))]
-            .map(cliente => cliente.includes('TCC') ? 'TCC' : cliente);
-    
-        const clienteSelect = document.getElementById("cliente");
-    
-        clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
-        [...new Set(clientes)].forEach(cliente => {
-            let option = document.createElement("option");
-            option.value = cliente;
-            option.textContent = cliente;
-            clienteSelect.appendChild(option);
-        });
-    
-        const actividadSelect = document.getElementById("actividad");
-        const conceptoSelect = document.getElementById("concepto");
-        const lugarInicialSelect = document.getElementById("lugarInicial");
-        const lugarFinalSelect = document.getElementById("lugarFinal");
-    
-        llenarSelect(actividadSelect, actividades);
-        llenarSelect(conceptoSelect, conceptos);
-        llenarSelect(lugarInicialSelect, lugaresTransporte);
-        llenarSelect(lugarFinalSelect, lugaresTransporte);
-    }
-    
-    function showNotification(message) {
-        let notification = document.querySelector('.notification');
-        if (!notification) {
-            notification = document.createElement('div');
-            notification.className = 'notification';
-            document.body.appendChild(notification);
-        }
-        
-        notification.textContent = message;
-        notification.classList.add('show');
-        
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 2000);
-    }
-    
-    document.addEventListener("DOMContentLoaded", () => {
-        inicializarSelects();
-    
-        document.getElementById("cliente").addEventListener('change', () => {
-            ['ciudad', 'equipo', 'serial'].forEach(id => {
-                const select = document.getElementById(id);
-                select.innerHTML = "<option value=''>Seleccione una opción</option>";
-                select.disabled = false;
-            });
-    
-            actualizarSelect("ciudad", "CIUDAD");
-            actualizarSelect("equipo", "EQUIPO");
-            actualizarSelect("serial", "SERIAL");
-        });
-    
-        document.getElementById("ciudad").addEventListener('change', () => {
-            actualizarSelect("equipo", "EQUIPO");
-            actualizarSelect("serial", "SERIAL");
-        });
-    
-        document.getElementById("equipo").addEventListener('change', () => {
-            actualizarSelect("serial", "SERIAL");
-        });
-    
-        document.getElementById("concepto").addEventListener('change', (e) => {
-            document.getElementById('camposTransporte').style.display = 
-                e.target.value === 'TRANS' ? 'block' : 'none';
-        });
-    
-        document.getElementById("copiar").addEventListener('click', async () => {
-            const codigoInput = document.getElementById("codigo");
-            try {
-                await navigator.clipboard.writeText(codigoInput.value);
-                showNotification('');
-            } catch (err) {
-                codigoInput.select();
-                document.execCommand('copy');
-                showNotification('');
-            }
-        });
-    
-        document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
-    
-        window.addEventListener('beforeunload', limpiarFormulario);
+ 
+        actualizarSelect("ciudad", "CIUDAD");
+        actualizarSelect("equipo", "EQUIPO");
+        actualizarSelect("serial", "SERIAL");
     });
+ 
+    document.getElementById("ciudad").addEventListener('change', () => {
+        actualizarSelect("equipo", "EQUIPO");
+        actualizarSelect("serial", "SERIAL");
+    });
+ 
+    document.getElementById("equipo").addEventListener('change', () => {
+        actualizarSelect("serial", "SERIAL");
+    });
+ 
+    document.getElementById("concepto").addEventListener('change', (e) => {
+        document.getElementById('camposTransporte').style.display = 
+            e.target.value === 'TRANS' ? 'block' : 'none';
+    });
+ 
+    document.getElementById("copiar").addEventListener('click', async () => {
+        const codigoInput = document.getElementById("codigo");
+        try {
+            await navigator.clipboard.writeText(codigoInput.value);
+            showNotification('');
+        } catch (err) {
+            codigoInput.select();
+            document.execCommand('copy');
+            showNotification('');
+        }
+    });
+ 
+    document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
+ 
+    window.addEventListener('beforeunload', limpiarFormulario);
+ });
