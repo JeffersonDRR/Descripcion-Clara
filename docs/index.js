@@ -309,10 +309,11 @@ const actividades = {
             const codigoInput = document.getElementById("codigo");
             try {
                 await navigator.clipboard.writeText(codigoInput.value);
-                showNotification('Código copiado al portapapeles');
+                showNotification('');
             } catch (err) {
                 codigoInput.select();
                 document.execCommand('copy');
+                showNotification('');
             }
         });
     
