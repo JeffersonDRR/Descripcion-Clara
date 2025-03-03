@@ -124,7 +124,8 @@ const actividades = {
     "INTERNO": "INT",
     "VISITA EXTRA": "VIS EXT",
     "INSTALACIÓN": "INS",
-    "GARANTÍA": "GAR"
+    "GARANTÍA": "GAR",
+    "OTRO": "OTRO"
  };
  
  const conceptos = {
@@ -315,7 +316,7 @@ const actividades = {
             showNotification('');
         } catch (err) {
             codigoInput.select();
-            document.execCommand('copy');
+            document.execCommand('copy');s
             showNotification('');
         }
     });
