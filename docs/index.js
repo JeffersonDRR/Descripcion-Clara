@@ -10,7 +10,7 @@ document.getElementById("form").addEventListener("submit", event => {
     const lugarFinal = document.getElementById("lugarFinal").value;
     const fecha = document.getElementById("fecha").value;
     const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', { 
-        day: '2-digit', 
+        day: '1-digit', 
         month: 'short'
     }).toUpperCase();
  
