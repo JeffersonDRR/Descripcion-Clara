@@ -1,68 +1,17 @@
-document.getElementById("form").addEventListener("submit", event => {
-    event.preventDefault();
-    const cliente = document.getElementById("cliente").value;
-    const ciudad = document.getElementById("ciudad").value;
-    const equipo = document.getElementById("equipo").value;
-    const serial = document.getElementById("serial").value;
-    const actividad = document.getElementById("actividad").value;
-    const concepto = document.getElementById("concepto").value;
-    const lugarInicial = document.getElementById("lugarInicial").value;
-    const lugarFinal = document.getElementById("lugarFinal").value;
-    const fecha = document.getElementById("fecha").value;
-    const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', { 
-        day: '1-digit', 
-        month: 'short'
-    }).toUpperCase();
- 
-    const codigo = baseDatos.find(d => 
-        (d.CLIENTE === cliente || 
-         (cliente === 'TCC' && d.CLIENTE.includes('TCC'))) && 
-        (d.EQUIPO === equipo || d.EQUIPO === '') && 
-        (d.CIUDAD === ciudad || d.CIUDAD === '') && 
-        (d.SERIAL === serial || d.SERIAL === '')
-    )?.CODIGO || "";
-    
-    if (!cliente || !actividad || !concepto || (!serial && actividad !== 'INT') || !codigo) {
-        console.log('Datos incompletos:', {
-            cliente,
-            actividad,
-            concepto,
-            serial,
-            codigo
-        });
-        document.getElementById("codigo").value = "Datos incompletos";
-        return;
-    }
- 
-    let codigoGenerado = `${codigo} ${concepto} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
-    
-    if (concepto === 'TRANS') {
-        const transporteVisible = document.getElementById('camposTransporte').style.display !== 'none';
-        if (transporteVisible && (!lugarInicial || !lugarFinal)) {
-            document.getElementById("codigo").value = "Seleccione lugares de transporte";
-            return;
-        }
- 
-        if (transporteVisible) {
-            codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
-        }
-    }
- 
-    document.getElementById("codigo").value = codigoGenerado;
- });
- const baseDatos = [
-	{ CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
-    { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-101)' },
-    { CLIENTE: 'AVON', EQUIPO: 'CUBISCAN 125', CIUDAD: 'MEDELLÍN', SERIAL: '7130697', CODIGO: '(5000-102)' },
-    { CLIENTE: 'COOPIDROGAS', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903216', CODIGO: '(1100-103)' },
-    { CLIENTE: 'COORDINADORA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '16030055', CODIGO: '(1100-104)' },
-    { CLIENTE: 'COORDINADORA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '16030056', CODIGO: '(1100-104)' },
-    { CLIENTE: 'CRUZ VERDE', EQUIPO: 'CUBISCAN 125', CIUDAD: 'COTA', SERIAL: '19050084', CODIGO: '(2140-106)' },
-    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BUCARAMANGA', SERIAL: '7050281', CODIGO: '(6800-107)' },
-    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'CARTAGENA', SERIAL: '7050283', CODIGO: '(1300-107)' },
-    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'CUCUTA', SERIAL: '7050282', CODIGO: '(5400-107)' },
-    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'PEREIRA', SERIAL: '7050180', CODIGO: '(6600-107)' },
-    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'SANTA MARTA', SERIAL: '7050284', CODIGO: '(4700-107)' },
+// Datos estáticos (simulando una base de datos)
+const baseDatos = [
+    { CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-100)' },
+    { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-100)' },
+    { CLIENTE: 'AVON', EQUIPO: 'CUBISCAN 125', CIUDAD: 'MEDELLÍN', SERIAL: '7130697', CODIGO: '(5000-100)' },
+    { CLIENTE: 'COORDINADORA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '16030055', CODIGO: '(1100-100)' },
+    { CLIENTE: 'COORDINADORA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '16030056', CODIGO: '(1100-100)' },
+    { CLIENTE: 'COOPIDROGAS', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903216', CODIGO: '(1100-100)' },
+    { CLIENTE: 'CRUZ VERDE', EQUIPO: 'CUBISCAN 125', CIUDAD: 'COTA', SERIAL: '19050084', CODIGO: '(2300-100)' },
+    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BUCARAMANGA', SERIAL: '7050281', CODIGO: '(6000-100)' },
+    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'CARTAGENA', SERIAL: '7050283', CODIGO: '(7000-100)' },
+    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'CUCUTA', SERIAL: '7050282', CODIGO: '(6000-100)' },
+    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'PEREIRA', SERIAL: '7050180', CODIGO: '(6000-100)' },
+    { CLIENTE: 'DEPRISA', EQUIPO: 'CUBISCAN 150', CIUDAD: 'SANTA MARTA', SERIAL: '7050284', CODIGO: '(7000-100)' },
     { CLIENTE: 'DHL EXPRESS', EQUIPO: 'CUBISCAN 200B', CIUDAD: 'CALI', SERIAL: '96120030', CODIGO: '(7600-100)' },
     { CLIENTE: 'DHL EXPRESS', EQUIPO: 'CUBISCAN 200TS', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1416246', CODIGO: '(1100-100)' },
     { CLIENTE: 'DHL EXPRESS', EQUIPO: 'CUBISCAN 200TS', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '18102975', CODIGO: '(1100-100)' },
@@ -118,210 +67,102 @@ document.getElementById("form").addEventListener("submit", event => {
     { CLIENTE: 'TIA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'GUAYAQUIL', SERIAL: '19031006', CODIGO: '(2392-121)' }
 ];
 
-const actividades = {
-    "MANTENIMIENTO PREVENTIVO": "MAN P",
-    "MANTENIMIENTO CORRECTIVO": "MAN C",
-    "INTERNO": "INT",
-    "VISITA EXTRA": "VIS EXT",
-    "INSTALACIÓN": "INS",
-    "GARANTÍA": "GAR",
-    "OTRO": "OTRO"
- };
- 
- const conceptos = {
-    "TRANSPORTE": "TRANS",
-    "CENA": "CENA",
-    "ALMUERZO": "ALMU",
-    "DESAYUNO": "DES",
-    "HERRAMIENTA": "HERR",
-    "HOTEL": "HOT",
-    "CAFETERIA": "CAF",
-    "BIENESTAR": "BIEN",
-    "ASEO": "ASE",
-    "PAGO POR EQUIVOCACIÓN": "CXC",
-    "CLIENTE": "CLI"
- };
- 
- const lugaresTransporte = {
-    "CLIENTE": "CLI", 
-    "HOTEL": "HOT", 
-    "CASA": "CAS", 
-    "AEROPUERTO": "AER", 
-    "OFICINA": "OFI", 
-    "CIT": "CIT"
- };
- 
- function filtrarBaseDatos() {
-    let datosFiltrados = [...baseDatos];
-    const cliente = document.getElementById("cliente").value;
-    const ciudad = document.getElementById("ciudad").value;
-    const equipo = document.getElementById("equipo").value;
- 
-    if (cliente) {
-        datosFiltrados = datosFiltrados.filter(item => 
-            item.CLIENTE === cliente || 
-            (item.CLIENTE.includes('TCC') && cliente.includes('TCC'))
-        );
-    }
-    if (ciudad) {
-        datosFiltrados = datosFiltrados.filter(item => 
-            item.CIUDAD === ciudad || item.CIUDAD === ''
-        );
-    }
-    if (equipo) {
-        datosFiltrados = datosFiltrados.filter(item => 
-            item.EQUIPO === equipo || item.EQUIPO === ''
-        );
-    }
- 
-    return datosFiltrados;
- }
- 
- function actualizarSelect(selectId, propiedad) {
-    const select = document.getElementById(selectId);
-    const datosFiltrados = filtrarBaseDatos();
- 
-    const opciones = [...new Set(
-        datosFiltrados
-            .map(item => item[propiedad])
-            .filter(valor => valor !== '')
-    )];
- 
-    select.innerHTML = "<option value=''>Seleccione una opción</option>";
-    opciones.sort().forEach(opcion => {
-        let option = document.createElement("option");
-        option.value = opcion;
-        option.textContent = opcion;
-        select.appendChild(option);
-    });
- 
-    if (opciones.length > 0) {
-        select.disabled = false;
-        if (opciones.length === 1) {
-            select.value = opciones[0];
-            select.dispatchEvent(new Event('change'));
-        }
-    } else {
-        select.disabled = true;
-    }
- }
- 
- function llenarSelect(select, opciones) {
-    select.innerHTML = "<option value=''>Seleccione una opción</option>";
-    Object.entries(opciones).forEach(([key, value]) => {
-        let option = document.createElement("option");
-        option.value = value;
-        option.textContent = key;
-        select.appendChild(option);
-    });
- }
- 
- function limpiarFormulario() {
-    document.getElementById("form").reset();
-    document.getElementById('camposTransporte').style.display = 'none';
-    document.getElementById('codigo').value = '';
- 
-    ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
-        const select = document.getElementById(id);
-        select.innerHTML = "<option value=''>Seleccione una opción</option>";
-        if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
-            select.disabled = true;
-        }
-    });
- 
-    inicializarSelects();
- }
- 
- function inicializarSelects() {
-    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))]
-        .map(cliente => cliente.includes('TCC') ? 'TCC' : cliente);
- 
-    const clienteSelect = document.getElementById("cliente");
- 
-    clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
-    [...new Set(clientes)].forEach(cliente => {
-        let option = document.createElement("option");
+// Referencias a las listas desplegables
+const clienteSelect = document.getElementById('cliente');
+const ciudadSelect = document.getElementById('ciudad');
+const equipoSelect = document.getElementById('equipo');
+const serialSelect = document.getElementById('serial');
+
+// Función para llenar las listas desplegables
+function llenarListas() {
+    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
+    const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
+
+    // Llenar Cliente
+    clientes.forEach(cliente => {
+        const option = document.createElement('option');
         option.value = cliente;
         option.textContent = cliente;
         clienteSelect.appendChild(option);
     });
- 
-    const actividadSelect = document.getElementById("actividad");
-    const conceptoSelect = document.getElementById("concepto");
-    const lugarInicialSelect = document.getElementById("lugarInicial");
-    const lugarFinalSelect = document.getElementById("lugarFinal");
- 
-    llenarSelect(actividadSelect, actividades);
-    llenarSelect(conceptoSelect, conceptos);
-    llenarSelect(lugarInicialSelect, lugaresTransporte);
-    llenarSelect(lugarFinalSelect, lugaresTransporte);
- }
- 
- function showNotification(message) {
-    let notification = document.querySelector('.notification');
-    if (!notification) {
-        notification = document.createElement('div');
-        notification.className = 'notification';
-        document.body.appendChild(notification);
-    }
-    
-    notification.textContent = message;
-    notification.classList.add('show');
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 2000);
- }
- 
- document.addEventListener("DOMContentLoaded", () => {
-    inicializarSelects();
- 
-    document.getElementById("actividad").addEventListener('change', (e) => {
-        if (e.target.value === 'INT') {
-            document.getElementById("cliente").value = 'MONTRA COLOMBIA SAS';
-            document.getElementById("cliente").dispatchEvent(new Event('change'));
-        }
+
+    // Llenar Ciudad
+    ciudades.forEach(ciudad => {
+        const option = document.createElement('option');
+        option.value = ciudad;
+        option.textContent = ciudad;
+        ciudadSelect.appendChild(option);
     });
- 
-    document.getElementById("cliente").addEventListener('change', () => {
-        ['ciudad', 'equipo', 'serial'].forEach(id => {
-            const select = document.getElementById(id);
-            select.innerHTML = "<option value=''>Seleccione una opción</option>";
-            select.disabled = false;
-        });
- 
-        actualizarSelect("ciudad", "CIUDAD");
-        actualizarSelect("equipo", "EQUIPO");
-        actualizarSelect("serial", "SERIAL");
+}
+
+// Referencias a las listas desplegables
+const clienteSelect = document.getElementById('cliente');
+const ciudadSelect = document.getElementById('ciudad');
+const equipoSelect = document.getElementById('equipo');
+const serialSelect = document.getElementById('serial');
+
+// Función para llenar las listas desplegables
+function llenarListas() {
+    const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))];
+    const ciudades = [...new Set(baseDatos.map(item => item.CIUDAD))];
+
+    // Log para depurar
+    console.log('Clientes:', clientes);
+    console.log('Ciudades:', ciudades);
+
+    // Llenar Cliente
+    clientes.forEach(cliente => {
+        const option = document.createElement('option');
+        option.value = cliente;
+        option.textContent = cliente;
+        clienteSelect.appendChild(option);
     });
- 
-    document.getElementById("ciudad").addEventListener('change', () => {
-        actualizarSelect("equipo", "EQUIPO");
-        actualizarSelect("serial", "SERIAL");
+
+    // Llenar Ciudad
+    ciudades.forEach(ciudad => {
+        const option = document.createElement('option');
+        option.value = ciudad;
+        option.textContent = ciudad;
+        ciudadSelect.appendChild(option);
     });
- 
-    document.getElementById("equipo").addEventListener('change', () => {
-        actualizarSelect("serial", "SERIAL");
+}
+
+// Función para actualizar los equipos según el cliente y ciudad seleccionados
+function actualizarEquiposYSeriales() {
+    const clienteSeleccionado = clienteSelect.value;
+    const ciudadSeleccionada = ciudadSelect.value;
+
+    console.log('Cliente seleccionado:', clienteSeleccionado);
+    console.log('Ciudad seleccionada:', ciudadSeleccionada);
+
+    // Filtrar los datos según el cliente y la ciudad seleccionados
+    const equiposFiltrados = baseDatos.filter(item => 
+        item.CLIENTE === clienteSeleccionado && item.CIUDAD === ciudadSeleccionada
+    );
+
+    // Log para depurar
+    console.log('Equipos filtrados:', equiposFiltrados);
+
+    // Limpiar y llenar el campo de equipos
+    equipoSelect.innerHTML = '';
+    serialSelect.innerHTML = '';
+
+    equiposFiltrados.forEach(item => {
+        const equipoOption = document.createElement('option');
+        equipoOption.value = item.EQUIPO;
+        equipoOption.textContent = item.EQUIPO;
+        equipoSelect.appendChild(equipoOption);
+
+        const serialOption = document.createElement('option');
+        serialOption.value = item.SERIAL;
+        serialOption.textContent = item.SERIAL;
+        serialSelect.appendChild(serialOption);
     });
- 
-    document.getElementById("concepto").addEventListener('change', (e) => {
-        document.getElementById('camposTransporte').style.display = 
-            e.target.value === 'TRANS' ? 'block' : 'none';
-    });
- 
-    document.getElementById("copiar").addEventListener('click', async () => {
-        const codigoInput = document.getElementById("codigo");
-        try {
-            await navigator.clipboard.writeText(codigoInput.value);
-            showNotification('');
-        } catch (err) {
-            codigoInput.select();
-            document.execCommand('copy');s
-            showNotification('');
-        }
-    });
- 
-    document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
- 
-    window.addEventListener('beforeunload', limpiarFormulario);
- });
+}
+
+// Agregar los eventos de cambio para las listas desplegables
+clienteSelect.addEventListener('change', actualizarEquiposYSeriales);
+ciudadSelect.addEventListener('change', actualizarEquiposYSeriales);
+
+// Llamar a la función para llenar las listas iniciales
+llenarListas();
