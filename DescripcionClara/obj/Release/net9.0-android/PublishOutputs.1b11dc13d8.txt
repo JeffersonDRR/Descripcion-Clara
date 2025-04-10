@@ -1,4 +1,0 @@
-C:\Users\usuario\DescripcionClara\DescripcionClara\bin\Release\net9.0-android\publish\com.tuempresa.descripcionclara-Signed.aab
-C:\Users\usuario\DescripcionClara\DescripcionClara\bin\Release\net9.0-android\publish\com.tuempresa.descripcionclara.aab
-C:\Users\usuario\DescripcionClara\DescripcionClara\bin\Release\net9.0-android\publish\com.tuempresa.descripcionclara-Signed.apk
-C:\Users\usuario\DescripcionClara\DescripcionClara\bin\Release\net9.0-android\publish\_Microsoft.Android.Resource.Designer.dll
