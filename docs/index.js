@@ -1,5 +1,7 @@
 document.getElementById("form").addEventListener("submit", event => {
     event.preventDefault();
+    
+    // Capturar todos los valores necesarios
     const cliente = document.getElementById("cliente").value;
     const ciudad = document.getElementById("ciudad").value;
     const equipo = document.getElementById("equipo").value;
@@ -9,35 +11,70 @@ document.getElementById("form").addEventListener("submit", event => {
     const lugarInicial = document.getElementById("lugarInicial").value;
     const lugarFinal = document.getElementById("lugarFinal").value;
 
+    // Agregar console.log para depuración
+    console.log("Valores del formulario:", { 
+        cliente, ciudad, equipo, serial, actividad, concepto
+    });
+
     // Fix the date handling
     const fecha = document.getElementById("fecha").value;
+    console.log("Fecha seleccionada:", fecha);
+    
     const fechaObj = new Date(fecha + 'T00:00:00'); // Ensure correct date parsing
+    console.log("Fecha objeto:", fechaObj);
+    
     const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { 
         day: 'numeric', 
         month: 'short'
     }).toUpperCase();
+    console.log("Fecha formateada:", fechaFormateada);
 
-    const codigo = baseDatos.find(d => 
-        (d.CLIENTE === cliente || 
-         (cliente === 'TCC' && d.CLIENTE.includes('TCC'))) && 
-        (d.EQUIPO === equipo || d.EQUIPO === '') && 
-        (d.CIUDAD === ciudad || d.CIUDAD === '') && 
-        (d.SERIAL === serial || d.SERIAL === '')
-    )?.CODIGO || "";
+    // Buscar el código en la base de datos con depuración
+    let codigoEncontrado = null;
+    for (const item of baseDatos) {
+        const clienteCoincide = item.CLIENTE === cliente || 
+                               (cliente === 'TCC' && item.CLIENTE.includes('TCC'));
+        const equipoCoincide = item.EQUIPO === equipo || item.EQUIPO === '';
+        const ciudadCoincide = item.CIUDAD === ciudad || item.CIUDAD === '';
+        const serialCoincide = item.SERIAL === serial || item.SERIAL === '';
+        
+        if (clienteCoincide && equipoCoincide && ciudadCoincide && serialCoincide) {
+            codigoEncontrado = item.CODIGO;
+            break;
+        }
+    }
+    
+    const codigo = codigoEncontrado || "";
+    console.log("Código encontrado:", codigo);
 
-    if (!cliente || !actividad || !concepto || (!serial && actividad !== 'INT') || !codigo) {
-        console.log('Datos incompletos:', {
-            cliente,
-            actividad,
-            concepto,
-            serial,
-            codigo
-        });
-        document.getElementById("codigo").value = "Datos incompletos";
+    // Validación de datos con mensaje más descriptivo
+    if (!cliente) {
+        document.getElementById("codigo").value = "Seleccione un cliente";
+        return;
+    }
+    
+    if (!actividad) {
+        document.getElementById("codigo").value = "Seleccione una actividad";
+        return;
+    }
+    
+    if (!concepto) {
+        document.getElementById("codigo").value = "Seleccione un concepto";
+        return;
+    }
+    
+    if (!serial && actividad !== 'INT') {
+        document.getElementById("codigo").value = "Seleccione un serial";
+        return;
+    }
+    
+    if (!codigo) {
+        document.getElementById("codigo").value = "No se encontró un código para esta combinación";
         return;
     }
 
     let codigoGenerado = `${codigo} ${concepto} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
+    console.log("Código generado inicial:", codigoGenerado);
     
     if (concepto === 'TRANS') {
         const transporteVisible = document.getElementById('camposTransporte').style.display !== 'none';
@@ -48,14 +85,17 @@ document.getElementById("form").addEventListener("submit", event => {
 
         if (transporteVisible) {
             codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
+            console.log("Código generado para transporte:", codigoGenerado);
         }
     }
 
+    // Asignar el código generado y verificar que se haya asignado
     document.getElementById("codigo").value = codigoGenerado;
+    console.log("Código final asignado:", codigoGenerado);
 });
 
 const baseDatos = [
-	{ CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
+    { CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-101)' },
     { CLIENTE: 'AVON', EQUIPO: 'CUBISCAN 125', CIUDAD: 'MEDELLÍN', SERIAL: '7130697', CODIGO: '(5000-102)' },
     { CLIENTE: 'COOPIDROGAS', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903216', CODIGO: '(1100-103)' },
@@ -237,13 +277,15 @@ const actividades = {
  }
  
  function inicializarSelects() {
+    // Obtener la lista de clientes únicos de la base de datos
     const clientes = [...new Set(baseDatos.map(item => item.CLIENTE))]
         .map(cliente => cliente.includes('TCC') ? 'TCC' : cliente);
  
     const clienteSelect = document.getElementById("cliente");
  
+    // Limpiar y luego llenar el select de clientes
     clienteSelect.innerHTML = "<option value=''>Seleccione una opción</option>";
-    [...new Set(clientes)].forEach(cliente => {
+    [...new Set(clientes)].sort().forEach(cliente => {
         let option = document.createElement("option");
         option.value = cliente;
         option.textContent = cliente;
@@ -278,9 +320,11 @@ const actividades = {
  }
  
  document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded: Inicializando formulario");
     inicializarSelects();
  
     document.getElementById("actividad").addEventListener('change', (e) => {
+        console.log("Actividad cambiada a:", e.target.value);
         if (e.target.value === 'INT') {
             document.getElementById("cliente").value = 'MONTRA COLOMBIA SAS';
             document.getElementById("cliente").dispatchEvent(new Event('change'));
@@ -288,6 +332,7 @@ const actividades = {
     });
  
     document.getElementById("cliente").addEventListener('change', () => {
+        console.log("Cliente cambiado a:", document.getElementById("cliente").value);
         ['ciudad', 'equipo', 'serial'].forEach(id => {
             const select = document.getElementById(id);
             select.innerHTML = "<option value=''>Seleccione una opción</option>";
@@ -300,32 +345,49 @@ const actividades = {
     });
  
     document.getElementById("ciudad").addEventListener('change', () => {
+        console.log("Ciudad cambiada a:", document.getElementById("ciudad").value);
         actualizarSelect("equipo", "EQUIPO");
         actualizarSelect("serial", "SERIAL");
     });
  
     document.getElementById("equipo").addEventListener('change', () => {
+        console.log("Equipo cambiado a:", document.getElementById("equipo").value);
         actualizarSelect("serial", "SERIAL");
     });
  
     document.getElementById("concepto").addEventListener('change', (e) => {
+        console.log("Concepto cambiado a:", e.target.value);
         document.getElementById('camposTransporte').style.display = 
             e.target.value === 'TRANS' ? 'block' : 'none';
     });
  
     document.getElementById("copiar").addEventListener('click', async () => {
         const codigoInput = document.getElementById("codigo");
+        console.log("Copiando código:", codigoInput.value);
         try {
             await navigator.clipboard.writeText(codigoInput.value);
             showNotification('Código copiado');
         } catch (err) {
             codigoInput.select();
-            document.execCommand('copy'); // Eliminada la 's' extra
+            document.execCommand('copy');
             showNotification('Código copiado');
         }
     });
  
     document.getElementById("limpiar").addEventListener('click', limpiarFormulario);
  
-    window.addEventListener('beforeunload', limpiarFormulario);
- });
+    // Verificar opciones disabled en selects
+    const selects = ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'];
+    selects.forEach(id => {
+        const select = document.getElementById(id);
+        const options = select.querySelectorAll('option');
+        options.forEach(opt => {
+            // Si es la primera opción, asegurarse de que no esté disabled
+            if (opt.index === 0) {
+                opt.disabled = false;
+            }
+        });
+    });
+
+    console.log("Inicialización completa");
+});
