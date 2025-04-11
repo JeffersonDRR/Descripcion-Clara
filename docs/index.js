@@ -1,3 +1,51 @@
+// Versión de la aplicación - Incrementa este número cada vez que hagas un cambio
+const APP_VERSION = '1.0.1';
+
+// Función para comprobar y limpiar el caché si hay una nueva versión
+function checkAndClearCache() {
+    const savedVersion = localStorage.getItem('appVersion');
+    console.log('Versión guardada:', savedVersion, 'Versión actual:', APP_VERSION);
+    
+    if (savedVersion !== APP_VERSION) {
+        console.log('Nueva versión detectada. Limpiando caché...');
+        
+        // Limpiar todos los selectores
+        ['cliente', 'ciudad', 'equipo', 'serial', 'actividad', 'concepto'].forEach(id => {
+            const select = document.getElementById(id);
+            if (select) {
+                select.innerHTML = "<option value=''>Seleccione una opción</option>";
+                if (id !== 'cliente' && id !== 'actividad' && id !== 'concepto') {
+                    select.disabled = true;
+                }
+            }
+        });
+        
+        // Limpiar campos de transporte y código
+        if (document.getElementById('camposTransporte')) {
+            document.getElementById('camposTransporte').style.display = 'none';
+        }
+        if (document.getElementById('codigo')) {
+            document.getElementById('codigo').value = '';
+        }
+        
+        // Limpiar localStorage excepto la versión
+        const keysToPreserve = ['appVersion'];
+        Object.keys(localStorage).forEach(key => {
+            if (!keysToPreserve.includes(key)) {
+                localStorage.removeItem(key);
+            }
+        });
+        
+        // Limpiar sessionStorage
+        sessionStorage.clear();
+        
+        // Actualizar la versión guardada
+        localStorage.setItem('appVersion', APP_VERSION);
+        
+        console.log('Caché limpiado correctamente');
+    }
+}
+
 document.getElementById("form").addEventListener("submit", event => {
     event.preventDefault();
     
@@ -321,6 +369,10 @@ const actividades = {
  
  document.addEventListener("DOMContentLoaded", () => {
     console.log("DOMContentLoaded: Inicializando formulario");
+    
+    // Comprobar la versión y limpiar caché si es necesario
+    checkAndClearCache();
+ 
     inicializarSelects();
  
     document.getElementById("actividad").addEventListener('change', (e) => {
