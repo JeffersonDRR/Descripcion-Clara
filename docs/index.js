@@ -53,6 +53,7 @@ document.getElementById("form").addEventListener("submit", event => {
 
     document.getElementById("codigo").value = codigoGenerado;
 });
+
 const baseDatos = [
 	{ CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-101)' },
@@ -268,7 +269,7 @@ const actividades = {
         document.body.appendChild(notification);
     }
     
-    notification.textContent = message;
+    notification.textContent = message || "Código copiado";
     notification.classList.add('show');
     
     setTimeout(() => {
@@ -316,11 +317,11 @@ const actividades = {
         const codigoInput = document.getElementById("codigo");
         try {
             await navigator.clipboard.writeText(codigoInput.value);
-            showNotification('');
+            showNotification('Código copiado');
         } catch (err) {
             codigoInput.select();
-            document.execCommand('copy');s
-            showNotification('');
+            document.execCommand('copy'); // Eliminada la 's' extra
+            showNotification('Código copiado');
         }
     });
  
