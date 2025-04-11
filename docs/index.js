@@ -8,12 +8,15 @@ document.getElementById("form").addEventListener("submit", event => {
     const concepto = document.getElementById("concepto").value;
     const lugarInicial = document.getElementById("lugarInicial").value;
     const lugarFinal = document.getElementById("lugarFinal").value;
+
+    // Fix the date handling
     const fecha = document.getElementById("fecha").value;
-    const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', { 
-        day: '1-digit', 
+    const fechaObj = new Date(fecha + 'T00:00:00'); // Ensure correct date parsing
+    const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { 
+        day: 'numeric', 
         month: 'short'
     }).toUpperCase();
- 
+
     const codigo = baseDatos.find(d => 
         (d.CLIENTE === cliente || 
          (cliente === 'TCC' && d.CLIENTE.includes('TCC'))) && 
@@ -21,7 +24,7 @@ document.getElementById("form").addEventListener("submit", event => {
         (d.CIUDAD === ciudad || d.CIUDAD === '') && 
         (d.SERIAL === serial || d.SERIAL === '')
     )?.CODIGO || "";
-    
+
     if (!cliente || !actividad || !concepto || (!serial && actividad !== 'INT') || !codigo) {
         console.log('Datos incompletos:', {
             cliente,
@@ -33,7 +36,7 @@ document.getElementById("form").addEventListener("submit", event => {
         document.getElementById("codigo").value = "Datos incompletos";
         return;
     }
- 
+
     let codigoGenerado = `${codigo} ${concepto} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
     
     if (concepto === 'TRANS') {
@@ -42,15 +45,15 @@ document.getElementById("form").addEventListener("submit", event => {
             document.getElementById("codigo").value = "Seleccione lugares de transporte";
             return;
         }
- 
+
         if (transporteVisible) {
             codigoGenerado = `${codigo} ${concepto} ${lugarInicial}-${lugarFinal} ${actividad}${actividad === 'INT' ? '' : ` ${serial}`} ${fechaFormateada}`;
         }
     }
- 
+
     document.getElementById("codigo").value = codigoGenerado;
- });
- const baseDatos = [
+});
+const baseDatos = [
 	{ CLIENTE: '23 M&M', EQUIPO: 'CUBISCAN 150', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '19110469', CODIGO: '(1100-105)' },
     { CLIENTE: 'ALMAVIVA', EQUIPO: 'CUBISCAN 325', CIUDAD: 'BOGOTÁ D.C.', SERIAL: '1903215', CODIGO: '(1100-101)' },
     { CLIENTE: 'AVON', EQUIPO: 'CUBISCAN 125', CIUDAD: 'MEDELLÍN', SERIAL: '7130697', CODIGO: '(5000-102)' },
