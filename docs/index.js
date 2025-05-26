@@ -233,6 +233,7 @@ const actividades = {
     "ASEO": "ASE",
     "PAGO POR EQUIVOCACIÓN": "CXC",
     "CLIENTE": "CLI"
+    "INVENTARIO": "INV"
  };
  
  const lugaresTransporte = {
