@@ -215,7 +215,9 @@ const baseDatos = [
 
 const actividades = {
     "MANTENIMIENTO PREVENTIVO": "MAN P",
+    "MANTENIMIENTO PREVENTIVO Y BANDAS": "MAN P+B",
     "MANTENIMIENTO CORRECTIVO": "MAN C",
+    "MANTENIMIENTO CORRECTIVO Y BANDAS": "MAN C+B",
     "INTERNO": "INT",
     "VISITA EXTRA": "VIS EXT",
     "INSTALACIÓN": "INS",
@@ -234,7 +236,8 @@ const actividades = {
     "BIENESTAR": "BIEN",
     "ASEO": "ASE",
     "PAGO POR EQUIVOCACIÓN": "CXC",
-    "CLIENTE": "CLI"
+    "CLIENTE": "CLI",
+    "OTRO": "OTRO"
  };
  
  const lugaresTransporte = {
