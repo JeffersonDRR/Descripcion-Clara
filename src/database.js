@@ -46,6 +46,7 @@ const database = [
   { cliente: "MONTRA COLOMBIA SAS", equipo: "CAPACITACIÓN", ciudad: "BOGOTÁ D.C.", serial: "", codigo: "(1100-200)" },
   { cliente: "MONTRA COLOMBIA SAS", equipo: "HERRAMIENTA", ciudad: "BOGOTÁ D.C.", serial: "", codigo: "(1100-200)" },
   { cliente: "MONTRA COLOMBIA SAS", equipo: "SGSST", ciudad: "BOGOTÁ D.C.", serial: "", codigo: "(1100-200)" },
+  { cliente: "MONTRA COLOMBIA SAS", equipo: "IVENTARIO", ciudad: "BOGOTÁ D.C.", serial: "", codigo: "(1100-200)" },
   { cliente: "PANAMERICANA", equipo: "CUBISCAN 125", ciudad: "BOGOTÁ D.C.", serial: "7130909", codigo: "(1100-100)" },
   { cliente: "PANAMERICANA", equipo: "CUBISCAN 125", ciudad: "BOGOTÁ D.C.", serial: "7130910", codigo: "(1100-100)" },
   { cliente: "SKECHERS", equipo: "CUBISCAN 100", ciudad: "FUNZA", serial: "18090318", codigo: "(2500-100)" },
