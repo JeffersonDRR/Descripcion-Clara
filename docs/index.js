@@ -378,7 +378,16 @@ const actividades = {
     
     // Comprobar la versión y limpiar caché si es necesario
     checkAndClearCache();
- 
+     // Establecer la fecha actual
+    const fechaInput = document.getElementById("fecha");
+    if (fechaInput) {
+        const hoy = new Date();
+        const año = hoy.getFullYear();
+        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dia = String(hoy.getDate()).padStart(2, '0');
+        fechaInput.value = `${año}-${mes}-${dia}`;
+        console.log("Fecha establecida:", fechaInput.value);
+    }
     inicializarSelects();
  
     document.getElementById("actividad").addEventListener('change', (e) => {
