@@ -103,6 +103,91 @@ h2 {
 }
 
 /* =========================================
+   3b. BOTÓN REFRESCAR
+   ========================================= */
+.btn-refresh {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  letter-spacing: 0.3px;
+  transition: var(--transition);
+}
+
+.btn-refresh:hover {
+  border-color: var(--black);
+  color: var(--black);
+  background: var(--gray-100);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animación de giro para el ícono de refresh */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* =========================================
+   3c. BANNER DE ACTUALIZACIÓN
+   ========================================= */
+.update-banner {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--black);
+  color: var(--white);
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  animation: slideDown 0.3s ease;
+}
+
+.update-banner.oculto {
+  display: none;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.btn-update-now {
+  padding: 7px 16px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.btn-update-now:hover {
+  background: var(--red-dark);
+}
+
+/* =========================================
    4. TARJETAS / CONTENEDORES
    ========================================= */
 .container-form,

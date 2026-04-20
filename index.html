@@ -4,9 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generador de Códigos Cubiscan</title>
+
+  <!-- ── PWA META TAGS ── -->
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cubiscan">
+
+  <!-- ── FAVICON / ICONOS ── -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icons/icon-512x512.png">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192x192.png">
+
+  <!-- ── MANIFEST PWA ── -->
+  <link rel="manifest" href="./manifest.json">
+
+  <!-- ── FUENTES Y ESTILOS ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+
   <script type="module" src="js/main.js"></script>
 </head>
 <body>
@@ -17,7 +35,22 @@
         <span class="logo-text">CUBISCAN</span>
       </div>
       <h1>Generador de Códigos</h1>
+
+      <!-- ── BOTÓN REFRESCAR ── -->
+      <button id="btn-refresh" class="btn-refresh" title="Actualizar aplicación">
+        <svg id="refresh-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Actualizar App
+      </button>
     </header>
+
+    <!-- ── BANNER DE NUEVA VERSIÓN (oculto por defecto) ── -->
+    <div id="update-banner" class="update-banner oculto">
+      <span>🚀 Nueva versión disponible</span>
+      <button id="btn-update-now" class="btn-update-now">Actualizar ahora</button>
+    </div>
 
     <!-- ===== SECCIÓN GENERADOR ===== -->
     <section class="container-form" id="seccion-generador">

@@ -7,6 +7,26 @@ import { abrirModal, cerrarModal } from './modules/modal.js';
 // ── ESTADO GLOBAL ────────────────────────────────────────────────
 let datosApp = obtenerDeStorage() || [...databaseOriginal];
 
+// ── SINCRONIZACIÓN EN TIEMPO REAL (BroadcastChannel) ─────────────
+// Permite que todos los tabs/ventanas abiertas se sincronicen
+// instantáneamente cuando cualquier usuario modifica la base de datos.
+const syncChannel = new BroadcastChannel('cubiscan_sync');
+
+syncChannel.onmessage = (event) => {
+  if (event.data?.type === 'DB_UPDATED') {
+    // Recargar datos desde localStorage (ya actualizados por la otra pestaña)
+    datosApp = obtenerDeStorage() || [...databaseOriginal];
+    renderizarTabla(datosApp);
+    refrescarClientes();
+    mostrarNotificacion('📡 Base de datos sincronizada');
+  }
+};
+
+/** Emite un evento de sincronización a todas las pestañas abiertas */
+function emitirSync() {
+  syncChannel.postMessage({ type: 'DB_UPDATED' });
+}
+
 // ── CATÁLOGOS ────────────────────────────────────────────────────
 const actividades = {
   "MANTENIMIENTO PREVENTIVO":          "MAN P",
@@ -58,7 +78,78 @@ document.addEventListener('DOMContentLoaded', () => {
   renderizarTabla(datosApp);
   inicializarGenerador();
   inicializarAdmin();
+  registrarServiceWorker();
+  inicializarRefresh();
 });
+
+// ── SERVICE WORKER + PWA ─────────────────────────────────────────
+function registrarServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+
+  navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then((registration) => {
+      console.log('[PWA] Service Worker registrado:', registration.scope);
+
+      // Detectar cuando hay una nueva versión disponible
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Hay una nueva versión lista → mostrar banner
+            mostrarBannerActualizacion(newWorker);
+          }
+        });
+      });
+    })
+    .catch((err) => console.warn('[PWA] Error registrando SW:', err));
+
+  // Escuchar cuando el SW nuevo toma control → recargar la página
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
+// ── BOTÓN REFRESCAR ──────────────────────────────────────────────
+function inicializarRefresh() {
+  const btn = document.getElementById('btn-refresh');
+  if (!btn) return;
+
+  btn.addEventListener('click', async () => {
+    const icon = document.getElementById('refresh-icon');
+    icon.style.animation = 'spin 0.8s linear infinite';
+    btn.disabled = true;
+
+    try {
+      // 1. Limpiar todas las caches del SW
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+      // 2. Pedir al SW que se actualice
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) await reg.update();
+      }
+      // 3. Recargar la página forzando red (no caché)
+      window.location.reload(true);
+    } catch {
+      window.location.reload(true);
+    }
+  });
+}
+
+function mostrarBannerActualizacion(newWorker) {
+  const banner = document.getElementById('update-banner');
+  const btnNow = document.getElementById('btn-update-now');
+  if (!banner) return;
+
+  banner.classList.remove('oculto');
+
+  btnNow.addEventListener('click', () => {
+    newWorker.postMessage({ type: 'SKIP_WAITING' });
+    banner.classList.add('oculto');
+  });
+}
 
 // ── GENERADOR ────────────────────────────────────────────────────
 function inicializarGenerador() {
@@ -253,6 +344,7 @@ function eliminarRegistro(index) {
   if (confirm(`¿Eliminar ${item.equipo} de ${item.cliente}?`)) {
     datosApp.splice(index, 1);
     guardarEnStorage(datosApp);
+    emitirSync(); // ← Notificar a otras pestañas
     renderizarTabla(datosApp);
     refrescarClientes();
     mostrarNotificacion('Registro eliminado');
@@ -269,6 +361,7 @@ function onGuardar(index, datos) {
     mostrarNotificacion('Registro actualizado ✓');
   }
   guardarEnStorage(datosApp);
+  emitirSync(); // ← Notificar a otras pestañas
   renderizarTabla(datosApp);
   refrescarClientes();
   cerrarModal();
