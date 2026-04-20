@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Códigos Cubiscan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">CUBISCAN</span>
+      </div>
+      <h1>Generador de Códigos</h1>
+    </header>
+
+    <!-- ===== SECCIÓN GENERADOR ===== -->
+    <section class="container-form" id="seccion-generador">
+      <h2>Generar Código</h2>
+      <form id="generador-codigo">
+        <div class="grupo-form">
+          <label for="cliente">Cliente</label>
+          <select id="cliente"><option value="">Selecciona un cliente</option></select>
+        </div>
+        <div class="grupo-form">
+          <label for="ciudad">Ciudad</label>
+          <select id="ciudad" disabled><option value="">Selecciona una ciudad</option></select>
+        </div>
+        <div class="grupo-form">
+          <label for="equipo">Equipo</label>
+          <select id="equipo" disabled><option value="">Selecciona un equipo</option></select>
+        </div>
+        <div class="grupo-form">
+          <label for="serial">Serial</label>
+          <select id="serial" disabled><option value="">Selecciona un serial</option></select>
+        </div>
+        <div class="grupo-form">
+          <label for="actividad">Actividad</label>
+          <select id="actividad"><option value="">Selecciona actividad</option></select>
+        </div>
+        <div class="grupo-form">
+          <label for="concepto">Concepto</label>
+          <select id="concepto"><option value="">Selecciona concepto</option></select>
+        </div>
+
+        <!-- Campos de transporte (condicional) -->
+        <div id="camposTransporte" style="display:none;">
+          <div class="grupo-form">
+            <label for="lugarInicial">Lugar inicial</label>
+            <select id="lugarInicial"><option value="">Selecciona</option></select>
+          </div>
+          <div class="grupo-form">
+            <label for="lugarFinal">Lugar final</label>
+            <select id="lugarFinal"><option value="">Selecciona</option></select>
+          </div>
+        </div>
+
+        <div class="grupo-form">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha">
+        </div>
+
+        <div class="buttons-container">
+          <button type="submit" class="btn-primary">Generar</button>
+          <button type="button" id="limpiar" class="btn-secondary">Limpiar</button>
+        </div>
+      </form>
+
+      <div class="resultado-container">
+        <input type="text" id="codigo" readonly placeholder="El código aparecerá aquí">
+        <button id="copiar" class="btn-copiar" title="Copiar código">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== SECCIÓN ADMINISTRACIÓN ===== -->
+    <section class="container-admin" id="seccion-admin">
+      <div class="controles-tabla">
+        <h2>Base de Datos</h2>
+        <div class="controles-acciones">
+          <input type="text" id="buscador" placeholder="Buscar cliente o serial...">
+          <button id="btn-nuevo" class="btn-primary btn-nuevo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuevo Registro
+          </button>
+        </div>
+      </div>
+
+      <div class="tabla-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Equipo</th>
+              <th>Ciudad</th>
+              <th>Serial</th>
+              <th>Código</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="lista-database"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== MODAL AGREGAR / EDITAR ===== -->
+  <div id="modal-overlay" class="modal-overlay oculto" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-titulo">Nuevo Registro</h3>
+        <button id="modal-cerrar" class="btn-modal-cerrar" aria-label="Cerrar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="form-modal" novalidate>
+        <input type="hidden" id="modal-index" value="">
+
+        <div class="modal-grid">
+          <div class="grupo-form">
+            <label for="m-cliente">Cliente <span class="req">*</span></label>
+            <input type="text" id="m-cliente" placeholder="Ej: DHL EXPRESS" autocomplete="off">
+            <span class="error-msg" id="err-cliente"></span>
+          </div>
+          <div class="grupo-form">
+            <label for="m-equipo">Equipo <span class="req">*</span></label>
+            <input type="text" id="m-equipo" placeholder="Ej: CUBISCAN 150" autocomplete="off">
+            <span class="error-msg" id="err-equipo"></span>
+          </div>
+          <div class="grupo-form">
+            <label for="m-ciudad">Ciudad</label>
+            <input type="text" id="m-ciudad" placeholder="Ej: BOGOTÁ D.C." autocomplete="off">
+          </div>
+          <div class="grupo-form">
+            <label for="m-serial">Serial</label>
+            <input type="text" id="m-serial" placeholder="Ej: 19110469" autocomplete="off">
+          </div>
+          <div class="grupo-form grupo-full">
+            <label for="m-codigo">Código <span class="req">*</span></label>
+            <input type="text" id="m-codigo" placeholder="Ej: (1100-100)" autocomplete="off">
+            <span class="error-msg" id="err-codigo"></span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="modal-cancelar" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary" id="modal-guardar">Guardar Registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notificación toast -->
+  <div id="notificacion" class="notification"></div>
+</body>
+</html>
