@@ -249,14 +249,24 @@ function refrescarSeriales() {
   const filtrado = datosApp.filter(i =>
     i.cliente === cliente &&
     (!ciudad || i.ciudad === ciudad) &&
-    (!equipo || i.equipo === equipo) &&
-    i.serial
+    (!equipo || i.equipo === equipo)
   );
-  const seriales = [...new Set(filtrado.map(i => i.serial))].sort();
-  llenarSelectArr('serial', seriales, 'Selecciona un serial');
-  document.getElementById('serial').disabled = seriales.length === 0;
-  if (seriales.length === 1) {
-    document.getElementById('serial').value = seriales[0];
+  
+  // Separar seriales vacíos y no vacíos
+  const tieneSeriales = filtrado.some(i => i.serial);
+  const seriales = [...new Set(filtrado.map(i => i.serial).filter(s => s))].sort();
+  
+  // Si NO hay seriales (equipos administrativos de MONTRA), agregar opción especial
+  if (!tieneSeriales && filtrado.length > 0) {
+    llenarSelectArr('serial', ['N/A'], 'Selecciona un serial');
+    document.getElementById('serial').disabled = false;
+    document.getElementById('serial').value = 'N/A';
+  } else {
+    llenarSelectArr('serial', seriales, 'Selecciona un serial');
+    document.getElementById('serial').disabled = seriales.length === 0;
+    if (seriales.length === 1) {
+      document.getElementById('serial').value = seriales[0];
+    }
   }
 }
 
@@ -284,7 +294,8 @@ function generarCodigo(e) {
     const cliOk    = item.cliente === cliente;
     const ciudadOk = !item.ciudad || item.ciudad === ciudad;
     const equipoOk = !item.equipo || item.equipo === equipo;
-    const serialOk = !item.serial || item.serial === serial;
+    // Permitir match si serial es N/A (equipos sin serial)
+    const serialOk = !item.serial || item.serial === serial || serial === 'N/A';
     if (cliOk && ciudadOk && equipoOk && serialOk) {
       codigoBase = item.codigo;
       break;
@@ -295,7 +306,8 @@ function generarCodigo(e) {
 
   const fechaObj = new Date(fecha + 'T00:00:00');
   const fechaFmt = fechaObj.toLocaleDateString('es-ES', { day:'numeric', month:'short' }).toUpperCase();
-  const serialPart = actividad !== 'INT' ? ` ${serial}` : '';
+  // No agregar serial si es N/A o si es actividad interna
+  const serialPart = (actividad !== 'INT' && serial !== 'N/A') ? ` ${serial}` : '';
 
   let resultado = `${codigoBase} ${concepto} ${actividad}${serialPart} ${fechaFmt}`;
 
