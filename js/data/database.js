@@ -74,6 +74,8 @@ const database = [
   { cliente: "PANAMERICANA", equipo: "CUBISCAN 125", ciudad: "BOGOTÁ D.C.", serial: "7130909", codigo: "(1100-117)" },
   { cliente: "PANAMERICANA", equipo: "CUBISCAN 125", ciudad: "BOGOTÁ D.C.", serial: "7130910", codigo: "(1100-117)" },
 
+  { cliente: "PASAR EXPRESS", equipo: "CUBISCAN 200SQ", ciudad: "BOGOTÁ D.C.", serial: "-", codigo: "(1100-124)" },
+
   { cliente: "SKECHERS", equipo: "CUBISCAN 100", ciudad: "FUNZA", serial: "18090318", codigo: "(2860-118)" },
 
   { cliente: "SODIMAC", equipo: "CUBISCAN 150", ciudad: "TENJO", serial: "7050074", codigo: "(7990-119)" },
