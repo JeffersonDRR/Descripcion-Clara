@@ -92,7 +92,9 @@ const database = [
   { cliente: "GLOBAL-TCC", equipo: "CUBISCAN 75", ciudad: "MEDELLÍN", serial: "17070263", codigo: "(5000-122)" },
   { cliente: "GLOBAL-TCC", equipo: "CUBISCAN 75", ciudad: "BOGOTÁ D.C.", serial: "17070264", codigo: "(1100-122)" },
 
-  { cliente: "TIA", equipo: "CUBISCAN 325", ciudad: "GUAYAQUIL", serial: "19031006", codigo: "(2392-121)" }
+  { cliente: "TIA", equipo: "CUBISCAN 325", ciudad: "GUAYAQUIL", serial: "19031006", codigo: "(2392-121)" },
+
+  { cliente: "UMA", equipo: "CUBISCAN 325", ciudad: "ARMENIA", serial: "19031247", codigo: "(6301-123)" }
 ];
 
 export default database;
