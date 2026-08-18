@@ -120,20 +120,34 @@ function inicializarRefresh() {
     btn.disabled = true;
 
     try {
-      // 1. Limpiar todas las caches del SW
+      // 1. Borrar localStorage para eliminar la base de datos cacheada localmente
+      //    Así al recargar se tomará database.js fresco del servidor
+      localStorage.clear();
+
+      // 2. Desregistrar TODOS los Service Workers para que no sirvan archivos cacheados
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(reg => reg.unregister()));
+        console.log('[Refresh] Service Workers desregistrados');
+      }
+
+      // 3. Borrar todas las cachés del navegador (Cache Storage API)
       if ('caches' in window) {
         const keys = await caches.keys();
         await Promise.all(keys.map(k => caches.delete(k)));
+        console.log('[Refresh] Cachés eliminadas:', keys);
       }
-      // 2. Pedir al SW que se actualice
-      if ('serviceWorker' in navigator) {
-        const reg = await navigator.serviceWorker.getRegistration();
-        if (reg) await reg.update();
-      }
-      // 3. Recargar la página forzando red (no caché)
-      window.location.reload(true);
-    } catch {
-      window.location.reload(true);
+
+      // 4. Recargar la página sin caché usando un timestamp para forzar red
+      //    (reload(true) está deprecado, así que redirigimos con un query param único)
+      const url = new URL(window.location.href);
+      url.searchParams.set('_refresh', Date.now());
+      window.location.href = url.toString();
+
+    } catch (err) {
+      console.error('[Refresh] Error:', err);
+      // Fallback: intentar recarga directa
+      window.location.reload();
     }
   });
 }
@@ -251,11 +265,11 @@ function refrescarSeriales() {
     (!ciudad || i.ciudad === ciudad) &&
     (!equipo || i.equipo === equipo)
   );
-  
+
   // Separar seriales vacíos y no vacíos
   const tieneSeriales = filtrado.some(i => i.serial);
   const seriales = [...new Set(filtrado.map(i => i.serial).filter(s => s))].sort();
-  
+
   // Si NO hay seriales (equipos administrativos de MONTRA), agregar opción especial
   if (!tieneSeriales && filtrado.length > 0) {
     llenarSelectArr('serial', ['N/A'], 'Selecciona un serial');
