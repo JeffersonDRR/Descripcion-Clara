@@ -4,6 +4,8 @@ const database = [
 
   { cliente: "ALMAVIVA", equipo: "CUBISCAN 325", ciudad: "BOGOTÁ D.C.", serial: "1903215", codigo: "(1100-101)" },
 
+  { cliente: "ALTIPAL", equipo: "CUBISCAN 325", ciudad: "BOGOTÁ D.C.", serial: "19031247", codigo: "(1100-125)" },
+
   { cliente: "AVON", equipo: "CUBISCAN 125", ciudad: "MEDELLÍN", serial: "7130697", codigo: "(5000-102)" },
 
   { cliente: "COOPIDROGAS", equipo: "CUBISCAN 325", ciudad: "BOGOTÁ D.C.", serial: "1903216", codigo: "(1100-103)" },
@@ -98,3 +100,4 @@ const database = [
 ];
 
 export default database;
+
